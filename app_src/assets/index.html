@@ -428,34 +428,42 @@ function thinkLabel(m){
   const s = m.thinkMs ? Math.max(1, Math.round(m.thinkMs/1000)) : 0;
   return '已思考' + (s ? `（用时${s}秒）` : '');
 }
+function aiInner(m){
+  let inner='';
+  if(m.reasoning) inner += `<details class="think"${(!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
+  if(m.text) inner += md(m.text);
+  else if(m.pending && !m.reasoning) inner += '<span class="typing"><i></i><i></i><i></i></span>';
+  return inner;
+}
 function render(){
   $('#empty').style.display = state.msgs.length ? 'none' : '';
   $('#msgs').classList.toggle('on', state.msgs.length > 0);
-  $('#msgs').innerHTML = state.msgs.map(m=>{
-    if(m.role==='me') return `<div class="m me">${md(m.text)}</div>`;
-    let inner='';
-    if(m.reasoning) inner += `<details class="think"${(!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
-    if(m.text) inner += md(m.text);
-    else if(m.pending && !m.reasoning) inner += '<span class="typing"><i></i><i></i><i></i></span>';
-    return `<div class="m ai">${inner}</div>`;
-  }).join('');
+  $('#msgs').innerHTML = state.msgs.map(m=> m.role==='me' ? `<div class="m me">${md(m.text)}</div>` : `<div class="m ai">${aiInner(m)}</div>`).join('');
   $('#msgs').scrollTop = 1e6;
 }
-let _rafId=null;
+function paintLast(){
+  const cont=$('#msgs'); const nodes=cont.children; const lastM=state.msgs[state.msgs.length-1];
+  if(!lastM || lastM.role!=='ai' || !nodes.length || !nodes[nodes.length-1].classList.contains('ai')){ render(); return; }
+  nodes[nodes.length-1].innerHTML = aiInner(lastM);
+  cont.scrollTop = 1e6;
+}
+let _revTimer=null;
 function ensureReveal(){
-  if(_rafId!=null) return;
+  if(_revTimer!=null) return;
+  const step=(b)=>Math.max(1, Math.ceil(b/18));
   const loop=()=>{
-    _rafId=null; let back=false;
+    _revTimer=null; let back=false;
     for(const m of state.msgs){
       if(!m||m.role!=='ai'||m._tr==null) continue;
-      if(m._sr<m._tr.length){ const b=m._tr.length-m._sr; m._sr=Math.min(m._tr.length,m._sr+Math.max(1,Math.ceil(b/6))); m.reasoning=m._tr.slice(0,m._sr); m.pending=false; back=true; }
-      else if(m._st<m._tt.length){ const b=m._tt.length-m._st; m._st=Math.min(m._tt.length,m._st+Math.max(1,Math.ceil(b/6))); m.text=m._tt.slice(0,m._st); m.pending=false; back=true; }
+      if(m._sr<m._tr.length){ m._sr=Math.min(m._tr.length,m._sr+step(m._tr.length-m._sr)); m.reasoning=m._tr.slice(0,m._sr); m.pending=false; back=true; }
+      else if(m._st<m._tt.length){ m._st=Math.min(m._tt.length,m._st+step(m._tt.length-m._st)); m.text=m._tt.slice(0,m._st); m.pending=false; back=true; }
     }
-    if(back){ render(); _rafId=requestAnimationFrame(loop); return; }
+    paintLast();
+    if(back){ _revTimer=setTimeout(loop,24); return; }
     let fin=false; for(const m of state.msgs){ if(m._fin){ const f=m._fin; m._fin=null; f(); fin=true; } }
-    if(fin) render();
+    if(fin) paintLast();
   };
-  _rafId=requestAnimationFrame(loop);
+  _revTimer=setTimeout(loop,16);
 }
 function syncSend(){
   const has = !!$('#input').value.trim() && !state.busy;
