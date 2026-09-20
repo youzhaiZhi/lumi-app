@@ -109,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: WebViewWidget(controller: _controller),
     );
   }
