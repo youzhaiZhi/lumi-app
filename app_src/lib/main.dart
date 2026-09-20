@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,11 +48,6 @@ class _ChatScreenState extends State<ChatScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.white)
       ..loadFlutterAsset('assets/index.html');
-    final platform = _controller.platform;
-    if (platform is AndroidWebViewController) {
-      platform.setUseWideViewPort(true);
-      platform.setLoadWithOverviewMode(true);
-    }
   }
 
   @override
