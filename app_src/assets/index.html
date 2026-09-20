@@ -19,9 +19,11 @@ html,body{height:100%}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   background:#f2f2f4;color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
 }
-button,input{font:inherit;color:inherit}
+button,input,textarea{font:inherit;color:inherit}
 button{background:none;border:none;cursor:pointer}
+button:focus,button:focus-visible,input:focus,textarea:focus{outline:none}
 svg{display:block}
 
 /* ===== stage + phone frame ===== */
@@ -73,7 +75,7 @@ svg{display:block}
 /* ===== composer ===== */
 .foot{position:absolute;left:0;right:0;bottom:0;z-index:30;padding:8px 16px 30px}
 .box{
-  display:flex;flex-direction:column;gap:10px;border-radius:26px;
+  display:flex;flex-direction:column;gap:14px;border-radius:26px;
   padding:16px 12px 12px 18px;
   background:rgba(255,255,255,.6);
   backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
@@ -81,8 +83,14 @@ svg{display:block}
   box-shadow:0 10px 30px -14px rgba(30,40,80,.22);transition:border-color .2s;
 }
 .box:focus-within{border-color:#dfe3ea}
-.box input{flex:1;border:none;outline:none;background:none;font-size:15.5px;height:30px;min-width:0;padding:6px 6px 0 0;color:#1f2329}
-.box input::placeholder{color:#b6bac2}
+.box textarea{
+  flex:1;border:none;outline:none;background:none;width:100%;
+  font-family:inherit;font-size:15.5px;line-height:1.5;color:#1f2329;
+  min-height:26px;max-height:150px;resize:none;overflow-y:auto;scrollbar-width:none;
+  padding:6px 6px 6px 0;
+}
+.box textarea::-webkit-scrollbar{width:0;height:0}
+.box textarea::placeholder{color:#b6bac2}
 .boxbar{display:flex;align-items:center;gap:6px;height:32px}
 .boxbar .sp{flex:1}
 .tg{
@@ -180,7 +188,7 @@ svg{display:block}
 
       <div class="foot">
         <div class="box">
-          <input id="input" placeholder="发消息或按住说话" enterkeyhint="send">
+          <textarea id="input" rows="1" placeholder="发消息或按住说话"></textarea>
           <div class="boxbar">
             <button class="oc" id="plusBtn" aria-label="添加"><svg width="19" height="19"><use href="#i-plus"/></svg></button>
             <span class="sp"></span>
@@ -237,12 +245,13 @@ function syncSend(){
   $('#sendBtn').classList.toggle('on', has);
   $('#sendBtn').disabled = !has;
 }
+function autoGrow(){ const el=$('#input'); el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,150)+'px'; }
 
 function send(text){
   const v = (text ?? $('#input').value).trim();
   if(!v || state.busy) return;
   state.msgs.push({role:'me', text:v});
-  $('#input').value=''; syncSend(); render();
+  $('#input').value=''; autoGrow(); syncSend(); render();
   reply(v);
 }
 async function reply(q){
@@ -304,8 +313,8 @@ function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); 
 
 /* events */
 $('#sendBtn').addEventListener('click', ()=>send());
-$('#input').addEventListener('input', syncSend);
-$('#input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+$('#input').addEventListener('input', ()=>{ autoGrow(); syncSend(); });
+$('#input').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
 $('#newBtn').addEventListener('click', ()=>{ state.msgs=[]; render(); });
 $('#drawerNew').addEventListener('click', ()=>{ state.msgs=[]; render(); closeDrawer(); });
 $('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
