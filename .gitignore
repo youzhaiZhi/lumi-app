@@ -1,0 +1,25 @@
+# Flutter / Dart
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+analysis_options.yaml
+
+# Generated platform scaffolding (CI recreates android/ via `flutter create`)
+android/
+ios/
+macos/
+linux/
+windows/
+web/
+
+# Keystores
+*.jks
+*.keystore
+
+# OS / editor
+.DS_Store
+.idea/
+*.iml

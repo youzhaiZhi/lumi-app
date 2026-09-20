@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lumi</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#4d6bfe;
+  --blue-soft:#eef2ff;
+  --ink:#1f2329;
+  --sub:#8a919f;
+  --line:#eef0f3;
+  --bubble:#f2f4f8;
+  --bg:#ffffff;
+}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#f2f2f4;color:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden;
+}
+button,input{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+svg{display:block}
+
+/* ===== stage + phone frame ===== */
+.stage{height:100dvh;display:flex;align-items:center;justify-content:center;background:#f2f2f4}
+.phone{
+  width:392px;height:812px;flex:none;position:relative;background:#101013;
+  border-radius:56px;padding:11px;transform:scale(var(--s,1));transform-origin:center;
+  box-shadow:0 40px 90px -30px rgba(20,20,30,.4);
+}
+.screen{position:relative;width:100%;height:100%;border-radius:45px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:112px;height:31px;background:#000;border-radius:20px;z-index:41}
+.statusbar{position:absolute;top:0;left:0;right:0;height:54px;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:14px 30px 0;font-size:15px;font-weight:600;pointer-events:none}
+.home-ind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink);opacity:.85;z-index:45;pointer-events:none}
+
+/* ===== top bar ===== */
+.topbar{flex:none;display:flex;align-items:center;justify-content:space-between;padding:58px 14px 6px}
+.topbar button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#3a3f47}
+.topbar button:active{background:#f2f3f5}
+
+/* ===== body ===== */
+.body{flex:1;min-height:0;display:flex;flex-direction:column}
+
+/* empty state */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:120px}
+.empty .mark{display:grid;place-items:center}
+.empty h1{margin-top:26px;font-size:22px;font-weight:600;letter-spacing:-.3px;color:#1f2329}
+
+/* messages */
+.msgs{flex:1;overflow-y:auto;padding:8px 20px 130px;display:none;flex-direction:column;gap:18px}
+.msgs.on{display:flex}
+.msgs::-webkit-scrollbar{width:0}
+.m{max-width:84%;font-size:15px;line-height:1.72;word-break:break-word;animation:up .28s ease both}
+@keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.m.ai{align-self:flex-start;color:var(--ink)}
+.m.me{align-self:flex-end;background:var(--bubble);padding:10px 14px;border-radius:14px 14px 4px 14px}
+.m.ai p+p{margin-top:10px}
+.m.ai ul{margin:8px 0 8px 20px}
+.m.ai li{margin:4px 0}
+.m.ai strong{font-weight:600}
+.m.ai code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f2f3f5;padding:1px 5px;border-radius:5px}
+.m.ai pre{margin:10px 0;padding:12px;border-radius:10px;background:#f7f8fa;overflow-x:auto}
+.m.ai pre code{background:none;padding:0;font-size:12.8px;line-height:1.6}
+.typing{display:flex;gap:4px;padding:6px 0}
+.typing i{width:6px;height:6px;border-radius:50%;background:#c3c8d2;animation:tp 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+/* ===== composer ===== */
+.foot{position:absolute;left:0;right:0;bottom:0;z-index:30;padding:8px 16px 30px}
+.box{
+  display:flex;flex-direction:column;gap:10px;border-radius:26px;
+  padding:16px 12px 12px 18px;
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 10px 30px -14px rgba(30,40,80,.22);transition:border-color .2s;
+}
+.box:focus-within{border-color:#dfe3ea}
+.box input{flex:1;border:none;outline:none;background:none;font-size:15.5px;height:30px;min-width:0;padding:6px 6px 0 0;color:#1f2329}
+.box input::placeholder{color:#b6bac2}
+.boxbar{display:flex;align-items:center;gap:6px;height:32px}
+.boxbar .sp{flex:1}
+.tg{
+  display:flex;align-items:center;gap:4px;height:30px;padding:0 11px;border-radius:99px;
+  font-size:12px;font-weight:500;white-space:nowrap;color:var(--blue);background:#eaeefb;transition:all .18s;
+}
+.tg svg{width:14px;height:14px}
+.tg.on{background:var(--blue);color:#fff}
+.oc{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;border:1.4px solid #d3d7df;color:#1f2329;transition:background .15s}
+.oc svg{width:16px;height:16px}
+.oc:active{background:#f2f3f5}
+.go{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;background:#dfe2e8;color:#fff;transition:background .2s,transform .15s}
+.go.on{background:var(--blue)}
+.go svg{width:16px;height:16px}
+.go:active{transform:scale(.9)}
+
+/* ===== drawer ===== */
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:50;opacity:0;pointer-events:none;transition:opacity .26s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{
+  position:absolute;top:0;bottom:0;left:0;width:80%;max-width:320px;z-index:51;background:#fff;
+  transform:translateX(-102%);transition:transform .3s cubic-bezier(.2,.7,.3,1);
+  display:flex;flex-direction:column;padding:56px 12px 30px;
+}
+.drawer.on{transform:none;box-shadow:0 0 60px rgba(0,0,0,.15)}
+.drawer .new{
+  display:flex;align-items:center;gap:9px;margin:0 6px 14px;padding:11px 13px;border-radius:12px;
+  background:var(--blue-soft);color:var(--blue);font-size:14px;font-weight:600;
+}
+.drawer .lb{font-size:12px;color:var(--sub);padding:8px 12px 6px}
+.drawer .it{
+  width:100%;text-align:left;padding:11px 12px;border-radius:10px;font-size:14px;color:#3a3f47;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.drawer .it:active{background:#f4f5f7}
+
+.toast{position:absolute;left:50%;bottom:130px;transform:translate(-50%,10px);z-index:60;padding:8px 15px;border-radius:99px;background:rgba(31,35,41,.92);color:#fff;font-size:13px;opacity:0;pointer-events:none;transition:all .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:560px){
+  body{overflow:auto}
+  .stage{background:#fff}
+  .phone{width:100%;height:100dvh;padding:0;border-radius:0;box-shadow:none;transform:none}
+  .screen{border-radius:0}
+  .island,.statusbar,.home-ind{display:none}
+  .topbar{padding-top:12px}
+  .foot{padding-bottom:14px}
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3zm6.5 10.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-new" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M9.5 3A2.5 2.5 0 007 5.5 2.5 2.5 0 004.5 8 2.5 2.5 0 005 12.5 2.5 2.5 0 006 17a2.5 2.5 0 003.5 2.3V21h2V3h-2zM14.5 3A2.5 2.5 0 0117 5.5 2.5 2.5 0 0119.5 8 2.5 2.5 0 0119 12.5 2.5 2.5 0 0118 17a2.5 2.5 0 01-3.5 2.3V21h-2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" d="M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18 15 15 0 010-18z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M3 8h18M3 16h11"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 9.5v5h3.2L12 18V6L7.2 9.5H4zM15.5 9.2a4 4 0 010 5.6M18 6.8a7.5 7.5 0 010 10.4"/></symbol>
+  <symbol id="i-plusc" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 8v8M8 12h8"/></symbol>
+  <symbol id="i-atom" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="12" cy="12" rx="9" ry="3.8"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(120 12 12)"/></g></symbol>
+  <symbol id="i-voice" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 3a3 3 0 00-3 3v5a3 3 0 006 0V6a3 3 0 00-3-3zM5.5 11a6.5 6.5 0 0013 0M12 17.5V21M9 21h6"/></symbol>
+</svg>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="statusbar"><span>9:41</span><span style="letter-spacing:1px">•••</span></div>
+
+      <div class="scrim" id="scrim"></div>
+      <aside class="drawer" id="drawer">
+        <button class="new" id="drawerNew"><svg width="16" height="16"><use href="#i-plus"/></svg>新建对话</button>
+        <div class="lb">最近</div>
+        <div id="hist"></div>
+      </aside>
+
+      <header class="topbar">
+        <button id="menuBtn" aria-label="菜单"><svg width="22" height="22"><use href="#i-filter"/></svg></button>
+        <div style="display:flex;gap:4px">
+          <button aria-label="朗读"><svg width="21" height="21"><use href="#i-vol"/></svg></button>
+          <button id="newBtn" aria-label="新对话"><svg width="22" height="22"><use href="#i-plusc"/></svg></button>
+        </div>
+      </header>
+
+      <div class="body">
+        <div class="empty" id="empty">
+          <h1>欢迎回来，随时开始吧</h1>
+        </div>
+        <div class="msgs" id="msgs"></div>
+      </div>
+
+      <div class="foot">
+        <div class="box">
+          <input id="input" placeholder="发消息或按住说话" enterkeyhint="send">
+          <div class="boxbar">
+            <button class="oc" id="plusBtn" aria-label="添加"><svg width="19" height="19"><use href="#i-plus"/></svg></button>
+            <span class="sp"></span>
+            <button class="oc" id="voiceBtn" aria-label="语音"><svg width="19" height="19"><use href="#i-voice"/></svg></button>
+            <button class="go" id="sendBtn" aria-label="发送" disabled><svg width="16" height="16"><use href="#i-up"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+      <div class="home-ind"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const state = { msgs:[], busy:false, think:false, web:false };
+
+const HIST = ['重构支付网关的错误处理','Q3 用户留存归因','发布会新闻稿','本周计划怎么排'];
+$('#hist').innerHTML = HIST.map(t=>`<button class="it" data-h="${esc(t)}">${t}</button>`).join('');
+
+function md(t){
+  let out=''; const parts=t.split(/```/);
+  parts.forEach((p,i)=>{
+    if(i%2){ const nl=p.indexOf('\n'); out+=`<pre><code>${esc(nl>-1?p.slice(nl+1):p).trim()}</code></pre>`; }
+    else out+=inline(p);
+  });
+  return out;
+  function inline(s){
+    s=esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    let r='',list=false;
+    for(const ln of s.split('\n')){
+      const li=/^\s*[-*]\s+(.*)/.exec(ln);
+      if(li){ if(!list){r+='<ul>';list=true;} r+=`<li>${li[1]}</li>`; }
+      else{ if(list){r+='</ul>';list=false;} if(ln.trim()) r+=`<p>${ln}</p>`; }
+    }
+    if(list) r+='</ul>';
+    return r;
+  }
+}
+
+function render(){
+  $('#empty').style.display = state.msgs.length ? 'none' : '';
+  $('#msgs').classList.toggle('on', state.msgs.length > 0);
+  $('#msgs').innerHTML = state.msgs.map(m=>
+    `<div class="m ${m.role}">${m.pending?'<span class="typing"><i></i><i></i><i></i></span>':md(m.text)}</div>`
+  ).join('');
+  $('#msgs').scrollTop = 1e6;
+}
+function syncSend(){
+  const has = !!$('#input').value.trim() && !state.busy;
+  $('#sendBtn').classList.toggle('on', has);
+  $('#sendBtn').disabled = !has;
+}
+
+function send(text){
+  const v = (text ?? $('#input').value).trim();
+  if(!v || state.busy) return;
+  state.msgs.push({role:'me', text:v});
+  $('#input').value=''; syncSend(); render();
+  reply(v);
+}
+async function reply(q){
+  state.busy = true; syncSend();
+  const m = {role:'ai', text:'', pending:true};
+  state.msgs.push(m); render();
+  await new Promise(r=>setTimeout(r,650));
+  m.pending = false;
+  const full = compose(q);
+  let i=0;
+  while(i<full.length){
+    i = Math.min(full.length, i + 2 + Math.floor(Math.random()*3));
+    m.text = full.slice(0,i); render();
+    await new Promise(r=>setTimeout(r,16));
+  }
+  m.text = full; render();
+  state.busy = false; syncSend();
+}
+function compose(q){
+  const pre = state.think ? '我先梳理了一下这个问题。\n\n' : '';
+  if(/代码|python|js|重构|bug/i.test(q))
+    return pre+`可以这样写：
+
+\`\`\`python
+def quicksort(a):
+    if len(a) <= 1: return a
+    p = a[len(a)//2]
+    return (quicksort([x for x in a if x<p])
+          + [x for x in a if x==p]
+          + quicksort([x for x in a if x>p]))
+\`\`\`
+
+平均 \`O(n log n)\`。已排序输入会退化成 \`O(n²)\`,生产环境建议换三路划分。`;
+  if(/调研|分析|留存|竞品/i.test(q))
+    return pre+`查了几份公开数据,结论比较一致:
+
+- 下滑集中在**注册后 48 小时**,老用户稳定
+- 完成引导的留存 62%,跳过的只有 19%
+- Web 首屏加载是最大瓶颈
+
+建议先优化首屏,再简化引导。要分渠道明细我可以再拉一次。`;
+  if(/写|文案|稿|润色/i.test(q))
+    return pre+`写了一版,语气偏克制:
+
+有些事只有做过的人才知道难在哪。我们花了三个月,把一件本该五分钟完成的事缩短到四十秒——不是靠更聪明的算法,而是反复问一句:用户在这一步到底在犹豫什么?
+
+要更活泼或更正式的版本,说一声就好。`;
+  return pre+`我的想法是分三步:
+
+- **界定问题**:一句话说清「谁、在什么场景、卡在哪」
+- **最小验证**:用最低成本先跑通一次
+- **再放大**:只把资源投给验证过的部分
+
+补充一点背景(约束、时间线、试过的方案),我能答得更准。`;
+}
+
+let _tt;
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('on'),1600); }
+
+/* events */
+$('#sendBtn').addEventListener('click', ()=>send());
+$('#input').addEventListener('input', syncSend);
+$('#input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+$('#newBtn').addEventListener('click', ()=>{ state.msgs=[]; render(); });
+$('#drawerNew').addEventListener('click', ()=>{ state.msgs=[]; render(); closeDrawer(); });
+$('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
+$('#voiceBtn').addEventListener('click', ()=>toast('按住说话'));
+$('#menuBtn').addEventListener('click', ()=>{ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); });
+function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
+$('#scrim').addEventListener('click', closeDrawer);
+document.addEventListener('click', e=>{
+  const h = e.target.closest('[data-h]');
+  if(h){ send(h.dataset.h); closeDrawer(); }
+});
+
+/* fit phone to viewport */
+function fit(){
+  const p = $('#phone');
+  p.style.setProperty('--s', window.innerWidth<=560 ? 1 : Math.min(1,(innerHeight-40)/812,(innerWidth-32)/392));
+}
+addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

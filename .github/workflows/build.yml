@@ -1,0 +1,71 @@
+name: Build Android APK (arm64-v8a)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: stable
+          cache: true
+
+      - name: Scaffold Android project and overlay app sources
+        run: |
+          flutter config --no-analytics
+          flutter create --org com.lumi --project-name lumi --platforms=android .
+          rm -rf test
+          cp app_src/pubspec.yaml pubspec.yaml
+          cp app_src/lib/main.dart lib/main.dart
+          mkdir -p assets
+          cp app_src/assets/index.html assets/index.html
+
+      - name: Ensure INTERNET permission
+        run: |
+          f=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' "$f" \
+            || sed -i '0,/<application/ s|<application|<uses-permission android:name="android.permission.INTERNET"/>\n    <application|' "$f"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build release APK (arm64-v8a only)
+        run: flutter build apk --release --target-platform android-arm64
+
+      - name: Compute release tag
+        id: tag
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "name=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=v-manual-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: Lumi Android ${{ steps.tag.outputs.name }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
