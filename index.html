@@ -154,15 +154,83 @@ svg{display:block}
 .drawer .dset svg{color:#3a3f47;flex:none}
 .drawer .dset:active{background:#f4f5f7}
 
+/* ===== providers ===== */
+.providers{z-index:36}
+.models{z-index:36}
+.provider-edit{z-index:37}
+.md-custom{display:flex;align-items:center;gap:8px}
+.md-custom input{flex:1;min-width:0;border:none;background:none;font-size:14.5px;color:#1f2329;font-family:inherit}
+.md-custom input::placeholder{color:#b6bac2}
+.md-apply{flex:none;height:32px;padding:0 16px;border-radius:99px;background:var(--blue);color:#fff;font-size:13px;font-weight:600}
+.md-apply:active{transform:scale(.96)}
+.set-hd-add{grid-column:3;justify-self:end;width:34px;height:34px;border-radius:50%;background:#e9e9ec;color:#1f2329;display:grid;place-items:center}
+.set-hd-add:active{background:#dcdce0}
+.set-row .pv-badge{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700;letter-spacing:-.5px}
+.set-row .rt b{font-weight:600}
+.set-row .rt .rs{display:block;font-size:11.5px;color:#a6abb5;margin-top:2px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv-check{color:var(--blue);flex:none;width:18px;height:18px}
+.pv-f{padding:10px 15px 12px;border-bottom:1px solid #f0f0f2}
+.pv-f:last-child{border-bottom:none}
+.pv-f label{display:block;font-size:12px;color:#8a919f;margin-bottom:5px}
+.pv-f input{width:100%;border:none;background:none;font-size:14.5px;color:#1f2329;font-family:inherit}
+.pv-f input::placeholder{color:#b6bac2}
+.pv-hint{font-size:12px;color:#a6abb5;padding:14px 6px 0;line-height:1.6}
+.pv-empty{text-align:center;color:#a6abb5;font-size:13.5px;padding:40px 0}
+.pv-actions{display:flex;gap:10px;padding:22px 2px 6px}
+.pv-btn{flex:1;height:46px;border-radius:14px;font-size:15px;font-weight:600;display:grid;place-items:center;background:var(--blue);color:#fff;transition:transform .12s}
+.pv-btn:active{transform:scale(.98)}
+.pv-btn.ghost{flex:0 0 auto;padding:0 20px;background:#fff;color:#e0443f;border:1px solid #f1d7d5}
+.pv-diag-row{display:flex;gap:10px;padding:12px 15px}
+.pv-mini{flex:1;height:38px;border-radius:11px;background:#eef2ff;color:var(--blue);font-size:13.5px;font-weight:600;display:grid;place-items:center;transition:background .15s}
+.pv-mini:active{background:#e2e8ff}
+.pv-diag{padding:0 15px 14px;font-size:12.5px;line-height:1.6;color:#8a919f;word-break:break-word;white-space:pre-wrap}
+.pv-diag.ok{color:#1a9d5a}
+.pv-diag.err{color:#e0443f}
+
+/* composer model capsule */
+.mpill{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:52%;height:32px;padding:0 10px;border-radius:99px;background:#eef1f7;color:#3a3f47;font-size:12.5px;font-weight:500;transition:background .15s}
+.mpill:active{background:#e4e8f0}
+.mpill svg{width:14px;height:14px;flex:none;color:#8a919f}
+.mpill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* reasoning block in AI message */
+.think{margin:0 0 10px}
+.think>summary{display:flex;align-items:center;gap:6px;list-style:none;cursor:pointer;color:#8a919f;font-size:14px;padding:2px 0;user-select:none}
+.think>summary::-webkit-details-marker{display:none}
+.think>summary .th-cv{width:15px;height:15px;flex:none;color:#b6bac2;transition:transform .2s}
+.think[open]>summary .th-cv{transform:rotate(180deg)}
+.think-b{border-left:2px solid #e6e8ec;margin:8px 0 2px;padding:2px 0 2px 14px;color:#9aa0ab;font-size:14px;line-height:1.75}
+.think-b p{margin:0 0 8px}
+.think-b p:last-child{margin-bottom:0}
+
+/* bottom sheet (model + thinking depth) */
+.sheet-scrim{position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:39;opacity:0;pointer-events:none;transition:opacity .26s}
+.sheet-scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:40;background:#fff;border-radius:22px 22px 0 0;transform:translateY(101%);transition:transform .32s cubic-bezier(.2,.7,.3,1);max-height:72%;display:flex;flex-direction:column;box-shadow:0 -12px 40px -18px rgba(20,25,50,.3)}
+.sheet.on{transform:none}
+.sheet-hd{flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+.sheet-hd h3{font-size:15px;font-weight:600}
+.sheet-x{width:30px;height:30px;border-radius:50%;background:#eef0f3;color:#5b616c;display:grid;place-items:center}
+.sheet-x svg{width:16px;height:16px}
+.sheet-x:active{background:#e2e5ea}
+.sheet-body{flex:1;overflow-y:auto;padding:2px 14px 26px}
+.sheet-body::-webkit-scrollbar{width:0}
+.cs-prov{width:100%;text-align:left;font-size:12px;color:#8a919f;padding:16px 6px 8px;display:flex;align-items:center;gap:6px}
+.cs-prov svg{width:13px;height:13px;color:#c4c8d0}
+.seg{display:flex;gap:5px;background:#f2f2f4;border-radius:12px;padding:4px}
+.seg button{flex:1;height:36px;border-radius:9px;font-size:13.5px;color:#5b616c;transition:all .15s}
+.seg button.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
 @media (max-width:560px){
   body{overflow:auto}
   .stage{background:#fff}
   .phone{width:100%;height:100dvh;padding:0;border-radius:0;box-shadow:none;transform:none}
   .screen{border-radius:0}
   .island,.statusbar,.home-ind{display:none}
-  .topbar{padding-top:12px}
-  .foot{padding-bottom:14px}
-  .set-hd{padding-top:14px}
+  .topbar{padding-top:calc(max(env(safe-area-inset-top), 26px) + 6px)}
+  .foot{padding-bottom:max(env(safe-area-inset-bottom), 14px)}
+  .set-hd{padding-top:calc(max(env(safe-area-inset-top), 26px) + 6px)}
+  .sheet-body{padding-bottom:calc(max(env(safe-area-inset-bottom), 26px) + 8px)}
 }
 </style>
 </head>
@@ -191,6 +259,10 @@ svg{display:block}
   <symbol id="i-gear" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1v.3a2 2 0 11-4 0v-.2a1.6 1.6 0 00-2.7-1.1l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00-1.1-2.7H3a2 2 0 110-4h.2a1.6 1.6 0 001.1-2.7l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 002.7-1.1V3a2 2 0 114 0v.2a1.6 1.6 0 002.7 1.1l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 001.1 2.7h.3a2 2 0 110 4h-.2a1.6 1.6 0 00-1.5 1z"/></g></symbol>
   <symbol id="i-chevR" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-chevL" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 10-2.3 5.7M20 5v6h-6"/></symbol>
+  <symbol id="i-chevD" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
 </svg>
 
 <div class="stage">
@@ -227,6 +299,7 @@ svg{display:block}
           <textarea id="input" rows="1" placeholder="发消息或按住说话"></textarea>
           <div class="boxbar">
             <button class="oc" id="plusBtn" aria-label="添加"><svg width="19" height="19"><use href="#i-plus"/></svg></button>
+            <button class="mpill" id="modelPill" aria-label="选择模型"><svg><use href="#i-chip"/></svg><span id="mpLabel">模型</span><svg><use href="#i-chevD"/></svg></button>
             <span class="sp"></span>
             <button class="oc" id="voiceBtn" aria-label="语音"><svg width="19" height="19"><use href="#i-voice"/></svg></button>
             <button class="go" id="sendBtn" aria-label="发送" disabled><svg width="16" height="16"><use href="#i-up"/></svg></button>
@@ -243,8 +316,8 @@ svg{display:block}
         <div class="set-body">
           <div class="set-sec">模型与配置</div>
           <div class="set-card">
-            <button class="set-row" data-t="提供商"><span class="ri"><svg width="22" height="22"><use href="#i-server"/></svg></span><span class="rt">提供商</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
-            <button class="set-row" data-t="默认模型"><span class="ri"><svg width="22" height="22"><use href="#i-chip"/></svg></span><span class="rt">默认模型</span><span class="rv">Lumi-4</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
+            <button class="set-row" data-open="providers"><span class="ri"><svg width="22" height="22"><use href="#i-server"/></svg></span><span class="rt">提供商</span><span class="rv" id="setProvVal"></span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
+            <button class="set-row" data-open="models"><span class="ri"><svg width="22" height="22"><use href="#i-chip"/></svg></span><span class="rt">默认模型</span><span class="rv" id="setModelVal">Lumi-4</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="智能体"><span class="ri"><svg width="22" height="22"><use href="#i-robot"/></svg></span><span class="rt">智能体</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="网络搜索"><span class="ri"><svg width="22" height="22"><use href="#i-search"/></svg></span><span class="rt">网络搜索</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="语音服务"><span class="ri"><svg width="22" height="22"><use href="#i-voice"/></svg></span><span class="rt">语音服务</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
@@ -259,6 +332,59 @@ svg{display:block}
           <div class="set-sec">关于</div>
           <div class="set-card">
             <button class="set-row" data-t="关于"><span class="ri"><svg width="22" height="22"><use href="#i-info"/></svg></span><span class="rt">关于</span><span class="rv">v1.0.1</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings providers" id="providers">
+        <div class="set-hd">
+          <button class="set-back" id="pvBack" aria-label="返回"><svg width="20" height="20"><use href="#i-chevL"/></svg></button>
+          <h2>提供商</h2>
+          <button class="set-hd-add" id="pvAdd" aria-label="添加提供商"><svg width="20" height="20"><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="set-body">
+          <div class="set-card" id="pvList"></div>
+          <div class="pv-hint">内置 DeepSeek、OpenAI、通义千问，可添加任意 OpenAI 兼容的第三方提供商并配置多个。点击右上角 + 添加。</div>
+        </div>
+      </section>
+
+      <section class="settings models" id="models">
+        <div class="set-hd">
+          <button class="set-back" id="mdBack" aria-label="返回"><svg width="20" height="20"><use href="#i-chevL"/></svg></button>
+          <h2>默认模型</h2>
+          <button class="set-hd-add" id="mdPull" aria-label="从接口拉取模型"><svg width="19" height="19"><use href="#i-refresh"/></svg></button>
+        </div>
+        <div class="set-body">
+          <div class="set-sec" id="mdSub">当前提供商</div>
+          <div class="set-card" id="mdList"></div>
+          <div class="set-sec">自定义</div>
+          <div class="set-card">
+            <div class="pv-f"><label>手动输入模型 ID</label><div class="md-custom"><input id="mdCustom" placeholder="model-id" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="md-apply" id="mdApply">应用</button></div></div>
+          </div>
+          <div class="pv-hint">对话将使用所选模型，向当前默认提供商发起请求，并默认以流式方式逐字输出。</div>
+        </div>
+      </section>
+
+      <section class="settings provider-edit" id="providerEdit">
+        <div class="set-hd">
+          <button class="set-back" id="peBack" aria-label="返回"><svg width="20" height="20"><use href="#i-chevL"/></svg></button>
+          <h2 id="peTitle">添加提供商</h2>
+          <span class="set-hd-r"></span>
+        </div>
+        <div class="set-body" id="peBody"></div>
+      </section>
+
+      <div class="sheet-scrim" id="csScrim"></div>
+      <section class="sheet" id="composerSheet">
+        <div class="sheet-hd"><h3>模型与思考深度</h3><button class="sheet-x" id="csClose" aria-label="关闭"><svg><use href="#i-close"/></svg></button></div>
+        <div class="sheet-body">
+          <button class="cs-prov" id="csProv"><span>当前提供商</span><svg><use href="#i-chevR"/></svg></button>
+          <div class="set-card" id="csModels"></div>
+          <div class="set-sec">思考深度</div>
+          <div class="seg" id="csDepth">
+            <button data-depth="off">关闭</button>
+            <button data-depth="balanced">标准</button>
+            <button data-depth="deep">深度</button>
           </div>
         </div>
       </section>
@@ -297,12 +423,22 @@ function md(t){
   }
 }
 
+function thinkLabel(m){
+  if(m.pending && !m.text) return '思考中…';
+  const s = m.thinkMs ? Math.max(1, Math.round(m.thinkMs/1000)) : 0;
+  return '已思考' + (s ? `（用时${s}秒）` : '');
+}
 function render(){
   $('#empty').style.display = state.msgs.length ? 'none' : '';
   $('#msgs').classList.toggle('on', state.msgs.length > 0);
-  $('#msgs').innerHTML = state.msgs.map(m=>
-    `<div class="m ${m.role}">${m.pending?'<span class="typing"><i></i><i></i><i></i></span>':md(m.text)}</div>`
-  ).join('');
+  $('#msgs').innerHTML = state.msgs.map(m=>{
+    if(m.role==='me') return `<div class="m me">${md(m.text)}</div>`;
+    let inner='';
+    if(m.reasoning) inner += `<details class="think"${(m.pending&&!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
+    if(m.text) inner += md(m.text);
+    else if(m.pending && !m.reasoning) inner += '<span class="typing"><i></i><i></i><i></i></span>';
+    return `<div class="m ai">${inner}</div>`;
+  }).join('');
   $('#msgs').scrollTop = 1e6;
 }
 function syncSend(){
@@ -312,69 +448,278 @@ function syncSend(){
 }
 function autoGrow(){ const el=$('#input'); el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,150)+'px'; }
 
+function activeProvider(){ return PROVIDERS.find(p=>p.id===ACTIVE) || null; }
+function modelsFor(p){ if(!p) return []; const bl=(p.builtin&&BRAND[p.id]&&BRAND[p.id].models)||[]; const pl=p.models||[]; const out=Array.from(new Set([...pl,...bl])); if(!out.length&&p.model) out.push(p.model); return out; }
+function chatUrl(p){ return p.base.replace(/\/+$/,'')+'/chat/completions'; }
+function authHeaders(p){ const h={'Content-Type':'application/json'}; if(p.key) h['Authorization']='Bearer '+p.key; return h; }
+
+/* ---- HTTP bridge: route through native (Dart) to bypass WebView CORS; fetch fallback for browser preview ---- */
+const streams = {};
+function sseLines(s){
+  let i;
+  while((i=s.buf.indexOf('\n'))>=0){
+    const line=s.buf.slice(0,i).replace(/\r$/,''); s.buf=s.buf.slice(i+1);
+    const t=line.trim(); if(!t.startsWith('data:')) continue;
+    const d=t.slice(5).trim(); if(d==='[DONE]') continue;
+    try{ const j=JSON.parse(d); const ch=j.choices&&j.choices[0]; const src=(ch&&(ch.delta||ch.message))||{}; const r=src.reasoning||src.reasoning_content||''; const c=src.content||''; if((r||c)&&s.cb) s.cb({r,c}); }catch(e){}
+  }
+}
+window.__lumi = {
+  onDelta:(id,t)=>{ const s=streams[id]; if(!s) return; if(s.mode==='json'){ s.buf+=t; } else { s.buf+=t; sseLines(s); } },
+  onEnd:(id)=>{ const s=streams[id]; if(!s) return; if(s.mode==='json'){ try{ s.res(JSON.parse(s.buf||'{}')); }catch(e){ s.rej(e); } } else { if(s.buf) sseLines(s); s.res(); } delete streams[id]; },
+  onError:(id,m)=>{ const s=streams[id]; if(!s) return; s.rej(new Error(m||'请求失败')); delete streams[id]; },
+};
+function request(cfg){
+  const id=cfg.id;
+  return new Promise((res,rej)=>{
+    streams[id]={mode:cfg.mode||'sse',buf:'',res,rej,cb:cfg.onDelta};
+    const chan=window.FlutterLumi;
+    if(chan && chan.postMessage){
+      chan.postMessage(JSON.stringify({id,url:cfg.url,method:cfg.method||'POST',headers:cfg.headers||{},body:cfg.body||''}));
+    }else{
+      fetchFallback(cfg,id);
+    }
+  });
+}
+async function fetchFallback(cfg,id){
+  const s=streams[id];
+  try{
+    const r=await fetch(cfg.url,{method:cfg.method||'POST',headers:cfg.headers||{},body:cfg.body||null});
+    if(!r.ok){ s.rej(new Error('HTTP '+r.status)); delete streams[id]; return; }
+    if(cfg.mode==='json'){ const j=await r.json(); s.res(j); delete streams[id]; return; }
+    const rd=r.body.getReader(), dec=new TextDecoder();
+    for(;;){ const {done,value}=await rd.read(); if(done) break; s.buf+=dec.decode(value,{stream:true}); if(s.mode==='sse') sseLines(s); }
+    s.res(); delete streams[id];
+  }catch(e){ s.rej(e); if(streams[id]) delete streams[id]; }
+}
+
 function send(text){
   const v = (text ?? $('#input').value).trim();
   if(!v || state.busy) return;
+  const prov = activeProvider();
+  if(!prov){ toast('请先在 设置 → 提供商 添加并选择提供商'); return; }
+  if(!prov.key){ toast('请先在 设置 → 提供商 填写 '+prov.name+' 的 API Key'); return; }
   state.msgs.push({role:'me', text:v});
   $('#input').value=''; autoGrow(); syncSend(); render();
-  reply(v);
+  chatReply(prov);
 }
-async function reply(q){
+async function chatReply(prov){
   state.busy = true; syncSend();
-  const m = {role:'ai', text:'', pending:true};
+  const t0 = Date.now();
+  const m = {role:'ai', text:'', reasoning:'', thinkMs:0, pending:true};
   state.msgs.push(m); render();
-  await new Promise(r=>setTimeout(r,650));
-  m.pending = false;
-  const full = compose(q);
-  let i=0;
-  while(i<full.length){
-    i = Math.min(full.length, i + 2 + Math.floor(Math.random()*3));
-    m.text = full.slice(0,i); render();
-    await new Promise(r=>setTimeout(r,16));
+  const model = prov.model || modelsFor(prov)[0] || '';
+  let sys = '你是 Lumi，一个简洁友好的 AI 助手。请使用与用户相同的语言回答，并在合适时输出 Markdown。';
+  if(DEPTH==='off') sys += '\n\n请直接给出最终答案，省略冗长的推理过程。';
+  else if(DEPTH==='deep') sys += '\n\n请先逐步、深入地思考，再给出完整严谨的答案。';
+  const messages = [{role:'system', content:sys}]
+    .concat(state.msgs.filter(x=>!x.pending).map(x=>({role:x.role==='me'?'user':'assistant', content:x.text})));
+  const payload = {model, messages, stream:true};
+  if(prov.thinkingApi==='thinking') payload.thinking = {type: DEPTH==='off'?'disabled':'enabled'};
+  const body = JSON.stringify(payload);
+  try{
+    await request({ id:'c'+Date.now(), url:chatUrl(prov), method:'POST', mode:'sse', headers:authHeaders(prov), body,
+      onDelta:(d)=>{ m.pending=false; if(d.r) m.reasoning+=d.r; if(d.c){ if(!m.text && m.reasoning && !m.thinkMs) m.thinkMs=Date.now()-t0; m.text+=d.c; } render(); } });
+    m.pending=false; if(m.reasoning && !m.thinkMs) m.thinkMs=Date.now()-t0; if(!m.text && !m.reasoning) m.text='（模型未返回内容）'; render();
+  }catch(e){
+    m.pending=false;
+    m.text='请求失败：'+(e.message||e)+'\n\n请检查 设置 → 提供商 的 Base URL、API Key 与模型，以及网络连接。';
+    render();
   }
-  m.text = full; render();
   state.busy = false; syncSend();
-}
-function compose(q){
-  const pre = state.think ? '我先梳理了一下这个问题。\n\n' : '';
-  if(/代码|python|js|重构|bug/i.test(q))
-    return pre+`可以这样写：
-
-\`\`\`python
-def quicksort(a):
-    if len(a) <= 1: return a
-    p = a[len(a)//2]
-    return (quicksort([x for x in a if x<p])
-          + [x for x in a if x==p]
-          + quicksort([x for x in a if x>p]))
-\`\`\`
-
-平均 \`O(n log n)\`。已排序输入会退化成 \`O(n²)\`,生产环境建议换三路划分。`;
-  if(/调研|分析|留存|竞品/i.test(q))
-    return pre+`查了几份公开数据,结论比较一致:
-
-- 下滑集中在**注册后 48 小时**,老用户稳定
-- 完成引导的留存 62%,跳过的只有 19%
-- Web 首屏加载是最大瓶颈
-
-建议先优化首屏,再简化引导。要分渠道明细我可以再拉一次。`;
-  if(/写|文案|稿|润色/i.test(q))
-    return pre+`写了一版,语气偏克制:
-
-有些事只有做过的人才知道难在哪。我们花了三个月,把一件本该五分钟完成的事缩短到四十秒——不是靠更聪明的算法,而是反复问一句:用户在这一步到底在犹豫什么?
-
-要更活泼或更正式的版本,说一声就好。`;
-  return pre+`我的想法是分三步:
-
-- **界定问题**:一句话说清「谁、在什么场景、卡在哪」
-- **最小验证**:用最低成本先跑通一次
-- **再放大**:只把资源投给验证过的部分
-
-补充一点背景(约束、时间线、试过的方案),我能答得更准。`;
 }
 
 let _tt;
 function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('on'),1600); }
+
+/* ===== providers ===== */
+const BRAND = {
+  deepseek:{c:'#4d6bfe',t:'D',models:['deepseek-chat','deepseek-reasoner']},
+  openai:{c:'#10a37f',t:'O',models:['gpt-4o','gpt-4o-mini','o3-mini']},
+  qwen:{c:'#615ced',t:'通',models:['qwen-max','qwen-plus','qwen-turbo']},
+  sensenova:{c:'#0f9d8f',t:'S'},
+};
+const DEFAULTS = [
+  {id:'deepseek',name:'DeepSeek',base:'https://api.deepseek.com',key:'',model:'deepseek-chat',builtin:true},
+  {id:'openai',name:'OpenAI',base:'https://api.openai.com/v1',key:'',model:'gpt-4o-mini',builtin:true},
+  {id:'qwen',name:'通义千问',base:'https://dashscope.aliyuncs.com/compatible-mode/v1',key:'',model:'qwen-plus',builtin:true},
+  {id:'sensenova',name:'SenseNova',base:'https://token.sensenova.cn/v1',key:'sk-5jiUMg2wLT7Zl8bR52QR4u3alNWe2Ngc',model:'sensenova-6.8-flash-lite',thinkingApi:'thinking',builtin:true,
+    models:['sensenova-6.8-flash-lite','sensenova-6.7-flash-lite','sensenova-u1.5-fast','sensenova-u1.5-lite','sensenova-u1-fast','deepseek-v4-pro','deepseek-v4-flash','kimi-k3','glm-5.2']},
+];
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+let PROVIDERS, ACTIVE;
+(function initProviders(){
+  let saved=null; try{ const r=lsGet('lumi.providers'); if(r) saved=JSON.parse(r); }catch(e){}
+  PROVIDERS = Array.isArray(saved)&&saved.length ? saved : DEFAULTS.map(d=>({...d}));
+  ACTIVE = lsGet('lumi.activeProvider') || (PROVIDERS.find(p=>p.key&&p.base)||PROVIDERS[0]).id;
+  if(!PROVIDERS.some(p=>p.id===ACTIVE)) ACTIVE = PROVIDERS[0].id;
+})();
+let DEPTH = lsGet('lumi.depth') || 'balanced';
+function saveP(){ lsSet('lumi.providers', JSON.stringify(PROVIDERS)); lsSet('lumi.activeProvider', ACTIVE); }
+function host(u){ return (u||'').replace(/^https?:\/\//,'').replace(/\/.*$/,''); }
+function badgeColor(p){ return (p.builtin&&BRAND[p.id])?BRAND[p.id].c:'#8a919f'; }
+function badgeText(p){ return (p.builtin&&BRAND[p.id])?BRAND[p.id].t:(p.name.trim().slice(0,1).toUpperCase()||'?'); }
+
+function renderProviders(){
+  const L=$('#pvList');
+  if(!L) return;
+  L.innerHTML = PROVIDERS.length ? PROVIDERS.map(p=>`
+    <button class="set-row" data-pid="${p.id}">
+      <span class="ri"><span class="pv-badge" style="background:${badgeColor(p)}">${esc(badgeText(p))}</span></span>
+      <span class="rt"><b>${esc(p.name)}</b><span class="rs">${esc(p.base?host(p.base):'未配置地址')}${p.key?' · 已填密钥':''}</span></span>
+      ${p.id===ACTIVE?'<svg class="pv-check"><use href="#i-check"/></svg>':''}
+      <svg class="ra"><use href="#i-chevR"/></svg>
+    </button>`).join('')
+    : '<div class="pv-empty">还没有提供商，点右上角 + 添加</div>';
+  const a = PROVIDERS.find(p=>p.id===ACTIVE);
+  $('#setProvVal').textContent = a?a.name:'未选择';
+  $('#setModelVal').textContent = a?(a.model||a.name):'Lumi-4';
+  updateModelPill();
+}
+
+let editing = null;
+function openProviders(){ renderProviders(); $('#providers').classList.add('on'); }
+function closeProviders(){ $('#providers').classList.remove('on'); }
+function openProviderEdit(id){ editing = id ? (PROVIDERS.find(p=>p.id===id)||null) : null; renderEditForm(); $('#providerEdit').classList.add('on'); }
+function closeProviderEdit(){ $('#providerEdit').classList.remove('on'); editing=null; }
+
+function renderEditForm(){
+  const isNew = !editing;
+  const p = editing || {name:'',base:'',key:'',model:'',models:[]};
+  const models = p.builtin&&BRAND[p.id] ? BRAND[p.id].models : (p.models||[]);
+  const dl = models.length ? `<datalist id="peModels">${models.map(m=>`<option value="${esc(m)}">`).join('')}</datalist>` : '';
+  const isDefault = editing && editing.id===ACTIVE;
+  $('#peTitle').textContent = isNew ? '添加提供商' : (p.name||'编辑提供商');
+  $('#peBody').innerHTML = `
+    <div class="set-sec">连接信息</div>
+    <div class="set-card">
+      <div class="pv-f"><label>名称</label><input id="peName" value="${esc(p.name)}" placeholder="例如：我的中转 API" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div class="pv-f"><label>Base URL</label><input id="peBase" value="${esc(p.base)}" placeholder="https://api.example.com/v1" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div class="pv-f"><label>API Key</label><input id="peKey" type="password" value="${esc(p.key)}" placeholder="sk-..." autocomplete="off" spellcheck="false"></div>
+    </div>
+    <div class="set-sec">模型</div>
+    <div class="set-card">
+      <div class="pv-f"><label>默认模型</label><input id="peModel" value="${esc(p.model)}" ${models.length?'list="peModels"':''} placeholder="model-id" autocomplete="off" autocapitalize="off" spellcheck="false">${dl}</div>
+    </div>
+    <div class="set-sec">诊断</div>
+    <div class="set-card">
+      <div class="pv-diag-row"><button class="pv-mini" id="peDetect">检测模型</button><button class="pv-mini" id="peTest">测试模型</button></div>
+      <div class="pv-diag" id="peDiag">填写 Base URL 与 API Key 后，可检测可用模型或发起一次真实对话测试。</div>
+    </div>
+    ${isNew ? '' : `
+    <div class="set-sec">使用</div>
+    <div class="set-card">
+      <button class="set-row" id="peDefault"><span class="rt">设为默认提供商</span>${isDefault?'<svg class="pv-check"><use href="#i-check"/></svg>':''}</button>
+    </div>`}
+    <div class="pv-actions">
+      <button class="pv-btn ghost" id="peDelete" style="${(isNew||p.builtin)?'display:none':''}">删除</button>
+      <button class="pv-btn" id="peSave">保存</button>
+    </div>
+    <div class="pv-hint">API Key 仅保存在本机，用于向该提供商发起请求；留空视为未配置。第三方请填写 OpenAI 兼容接口地址。</div>`;
+  $('#peSave').onclick = saveProvider;
+  const del = $('#peDelete'); if(del && del.style.display!=='none') del.onclick = deleteProvider;
+  const def = $('#peDefault'); if(def) def.onclick = ()=>{ if(!editing) return; ACTIVE=editing.id; saveP(); renderProviders(); renderEditForm(); toast('已设为默认'); };
+  $('#peDetect').onclick = ()=>runDiag('detect');
+  $('#peTest').onclick = ()=>runDiag('test');
+}
+
+function formProvider(){
+  return { id: editing?editing.id:null, builtin: editing?!!editing.builtin:false,
+    base: $('#peBase').value.trim(), key: $('#peKey').value.trim(), model: $('#peModel').value.trim() };
+}
+async function runDiag(kind){
+  const p = formProvider(), out = $('#peDiag');
+  if(!p.base){ out.className='pv-diag err'; out.textContent='请先填写 Base URL'; return; }
+  if(!p.key){ out.className='pv-diag err'; out.textContent='请先填写 API Key'; return; }
+  const t0 = Date.now();
+  out.className='pv-diag'; out.textContent = kind==='detect' ? '正在检测可用模型…' : '正在发起测试对话…';
+  try{
+    if(kind==='detect'){
+      const j = await request({ id:'d'+Date.now(), url:p.base.replace(/\/+$/,'')+'/models', method:'GET', mode:'json', headers:authHeaders(p) });
+      const ids = (j.data||j.models||[]).map(x=>(x&&(x.id||x.name))||x).filter(Boolean);
+      out.className='pv-diag ok';
+      out.textContent = `✓ 连接正常，检测到 ${ids.length} 个模型` + (ids.length ? `\n${ids.slice(0,8).join('、')}${ids.length>8?' …':''}` : '');
+      if(editing && ids.length){ editing.models = Array.from(new Set(ids)); saveP(); if($('#models').classList.contains('on')) renderModels(); }
+    }else{
+      const model = p.model || (BRAND[p.id] && BRAND[p.id].models[0]) || '';
+      if(!model){ out.className='pv-diag err'; out.textContent='请先填写或选择一个模型'; return; }
+      const body = JSON.stringify({ model, messages:[{role:'user', content:'只回复两个字：你好'}], stream:false, max_tokens:16 });
+      const j = await request({ id:'t'+Date.now(), url:chatUrl(p), method:'POST', mode:'json', headers:authHeaders(p), body });
+      const ch = j.choices && j.choices[0];
+      const txt = (ch && ((ch.message && ch.message.content) || ch.text)) || '';
+      out.className='pv-diag ok';
+      out.textContent = `✓ ${model} 响应 ${Date.now()-t0}ms\n${(txt||'(空回复)').slice(0,80)}`;
+    }
+  }catch(e){
+    out.className='pv-diag err';
+    out.textContent = '✕ '+(e.message||e);
+  }
+}
+
+function saveProvider(){
+  const name=$('#peName').value.trim(), base=$('#peBase').value.trim(),
+        key=$('#peKey').value.trim(), model=$('#peModel').value.trim();
+  if(!name){ toast('请填写名称'); return; }
+  if(!base){ toast('请填写 Base URL'); return; }
+  if(editing){ Object.assign(editing,{name,base,key,model}); }
+  else{ const p={id:'c'+Date.now(),name,base,key,model,models:[],builtin:false}; PROVIDERS.push(p); ACTIVE=p.id; }
+  saveP(); renderProviders(); closeProviderEdit(); toast('已保存');
+}
+function deleteProvider(){
+  if(!editing || editing.builtin) return;
+  PROVIDERS = PROVIDERS.filter(p=>p.id!==editing.id);
+  if(ACTIVE===editing.id) ACTIVE = PROVIDERS[0]?PROVIDERS[0].id:'';
+  saveP(); renderProviders(); closeProviderEdit(); toast('已删除');
+}
+
+/* ===== model selection ===== */
+function renderModels(){
+  const p = activeProvider(), L = $('#mdList');
+  if(!p){ $('#mdSub').textContent='当前提供商'; L.innerHTML='<div class="pv-empty">请先在 设置 → 提供商 添加提供商</div>'; return; }
+  $('#mdSub').textContent = '当前提供商 · '+p.name;
+  const list = modelsFor(p), sel = p.model;
+  L.innerHTML = list.length ? list.map(mm=>`
+    <button class="set-row" data-model="${esc(mm)}"><span class="rt">${esc(mm)}</span>${mm===sel?'<svg class="pv-check"><use href="#i-check"/></svg>':''}</button>`).join('')
+    : '<div class="pv-empty">暂无模型，点右上角从接口拉取，或在下方手动输入</div>';
+}
+function openModels(){ renderModels(); $('#models').classList.add('on'); }
+function closeModels(){ $('#models').classList.remove('on'); }
+function setModel(mm){
+  const p = activeProvider(); if(!p || !mm) return;
+  p.model = mm;
+  if(Array.isArray(p.models) && !p.models.includes(mm)) p.models.push(mm);
+  saveP(); renderProviders(); renderModels();
+  if($('#composerSheet').classList.contains('on')) renderComposerSheet();
+  toast('已选择 '+mm);
+}
+
+/* ===== composer model + thinking-depth sheet ===== */
+function updateModelPill(){ const el=$('#mpLabel'); if(!el) return; const p=activeProvider(); el.textContent = p ? (p.model || p.name) : '选择模型'; }
+function setDepth(d){ DEPTH=d; lsSet('lumi.depth',d); renderDepth(); }
+function renderDepth(){ document.querySelectorAll('#csDepth [data-depth]').forEach(b=>b.classList.toggle('on', b.dataset.depth===DEPTH)); }
+function renderComposerSheet(){
+  const p = activeProvider();
+  $('#csProv').firstChild.textContent = p ? ('当前提供商 · '+p.name) : '未选择提供商';
+  const list = modelsFor(p), sel = p && p.model;
+  $('#csModels').innerHTML = list.length ? list.map(mm=>`
+    <button class="set-row" data-cmodel="${esc(mm)}"><span class="rt">${esc(mm)}</span>${mm===sel?'<svg class="pv-check"><use href="#i-check"/></svg>':''}</button>`).join('')
+    : '<div class="pv-empty">该提供商暂无模型，可在 设置 → 默认模型 拉取或手动输入</div>';
+  renderDepth();
+}
+function openComposerSheet(){ renderComposerSheet(); $('#composerSheet').classList.add('on'); $('#csScrim').classList.add('on'); }
+function closeComposerSheet(){ $('#composerSheet').classList.remove('on'); $('#csScrim').classList.remove('on'); }
+async function pullModels(){
+  const p = activeProvider(); if(!p){ toast('请先选择提供商'); return; }
+  if(!p.base){ toast('未配置 Base URL'); return; }
+  toast('拉取模型中…');
+  try{
+    const j = await request({ id:'m'+Date.now(), url:p.base.replace(/\/+$/,'')+'/models', method:'GET', mode:'json', headers:authHeaders(p) });
+    const ids = (j.data||j.models||[]).map(x=> (x&&(x.id||x.name))||x).filter(Boolean);
+    if(!ids.length){ toast('接口未返回模型'); return; }
+    p.models = Array.from(new Set(ids)); saveP(); renderModels(); toast('已获取 '+p.models.length+' 个模型');
+  }catch(e){ toast('拉取失败：'+(e.message||e)); }
+}
 
 /* events */
 $('#sendBtn').addEventListener('click', ()=>send());
@@ -385,15 +730,33 @@ $('#drawerNew').addEventListener('click', ()=>{ state.msgs=[]; render(); closeDr
 $('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
 $('#voiceBtn').addEventListener('click', ()=>toast('按住说话'));
 function openSettings(){ $('#settings').classList.add('on'); closeDrawer(); }
-function closeSettings(){ $('#settings').classList.remove('on'); }
+function closeSettings(){ $('#settings').classList.remove('on'); closeProviders(); closeProviderEdit(); closeModels(); }
 $('#drawerSettings').addEventListener('click', openSettings);
 $('#setBack').addEventListener('click', closeSettings);
+$('#pvBack').addEventListener('click', closeProviders);
+$('#pvAdd').addEventListener('click', ()=>openProviderEdit(null));
+$('#peBack').addEventListener('click', closeProviderEdit);
+$('#pvList').addEventListener('click', e=>{ const r=e.target.closest('[data-pid]'); if(r) openProviderEdit(r.dataset.pid); });
+$('#mdBack').addEventListener('click', closeModels);
+$('#mdPull').addEventListener('click', pullModels);
+$('#mdApply').addEventListener('click', ()=>{ const v=$('#mdCustom').value.trim(); if(v) setModel(v); });
+$('#mdCustom').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); const v=e.target.value.trim(); if(v) setModel(v); } });
+$('#mdList').addEventListener('click', e=>{ const r=e.target.closest('[data-model]'); if(r) setModel(r.dataset.model); });
+$('#modelPill').addEventListener('click', openComposerSheet);
+$('#csClose').addEventListener('click', closeComposerSheet);
+$('#csScrim').addEventListener('click', closeComposerSheet);
+$('#csModels').addEventListener('click', e=>{ const r=e.target.closest('[data-cmodel]'); if(r) setModel(r.dataset.cmodel); });
+$('#csDepth').addEventListener('click', e=>{ const b=e.target.closest('[data-depth]'); if(b) setDepth(b.dataset.depth); });
+$('#csProv').addEventListener('click', ()=>{ closeComposerSheet(); openSettings(); openProviders(); });
+renderProviders();
 $('#menuBtn').addEventListener('click', ()=>{ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); });
 function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
 $('#scrim').addEventListener('click', closeDrawer);
 document.addEventListener('click', e=>{
   const h = e.target.closest('[data-h]');
   if(h){ send(h.dataset.h); closeDrawer(); return; }
+  const o = e.target.closest('[data-open]');
+  if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); return; }
   const s = e.target.closest('[data-t]');
   if(s){ toast(s.dataset.t); }
 });
