@@ -158,6 +158,7 @@ svg{display:block}
 .providers{z-index:36}
 .models{z-index:36}
 .provider-edit{z-index:37}
+.search{z-index:37}
 .md-custom{display:flex;align-items:center;gap:8px}
 .md-custom input{flex:1;min-width:0;border:none;background:none;font-size:14.5px;color:#1f2329;font-family:inherit}
 .md-custom input::placeholder{color:#b6bac2}
@@ -202,6 +203,8 @@ svg{display:block}
 .think-b{border-left:2px solid #e6e8ec;margin:8px 0 2px;padding:2px 0 2px 14px;color:#9aa0ab;font-size:14px;line-height:1.75}
 .think-b p{margin:0 0 8px}
 .think-b p:last-child{margin-bottom:0}
+.think-b .th-s{display:flex;align-items:flex-start;gap:6px;color:#7c828d;font-size:13.5px}
+.think-b .th-s .th-si{width:15px;height:15px;flex:none;margin-top:3px;color:#aab0ba}
 
 /* bottom sheet (model + thinking depth) */
 .sheet-scrim{position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:39;opacity:0;pointer-events:none;transition:opacity .26s}
@@ -300,6 +303,7 @@ svg{display:block}
           <div class="boxbar">
             <button class="oc" id="plusBtn" aria-label="添加"><svg width="19" height="19"><use href="#i-plus"/></svg></button>
             <button class="mpill" id="modelPill" aria-label="选择模型"><svg><use href="#i-chip"/></svg><span id="mpLabel">模型</span><svg><use href="#i-chevD"/></svg></button>
+            <button class="tg" id="webTg" aria-label="联网搜索"><svg><use href="#i-globe"/></svg><span>联网</span></button>
             <span class="sp"></span>
             <button class="oc" id="voiceBtn" aria-label="语音"><svg width="19" height="19"><use href="#i-voice"/></svg></button>
             <button class="go" id="sendBtn" aria-label="发送" disabled><svg width="16" height="16"><use href="#i-up"/></svg></button>
@@ -319,7 +323,7 @@ svg{display:block}
             <button class="set-row" data-open="providers"><span class="ri"><svg width="22" height="22"><use href="#i-server"/></svg></span><span class="rt">提供商</span><span class="rv" id="setProvVal"></span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-open="models"><span class="ri"><svg width="22" height="22"><use href="#i-chip"/></svg></span><span class="rt">默认模型</span><span class="rv" id="setModelVal">Lumi-4</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="智能体"><span class="ri"><svg width="22" height="22"><use href="#i-robot"/></svg></span><span class="rt">智能体</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
-            <button class="set-row" data-t="网络搜索"><span class="ri"><svg width="22" height="22"><use href="#i-search"/></svg></span><span class="rt">网络搜索</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
+            <button class="set-row" data-open="search"><span class="ri"><svg width="22" height="22"><use href="#i-search"/></svg></span><span class="rt">网络搜索</span><span class="rv" id="setSearchVal">关闭</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="语音服务"><span class="ri"><svg width="22" height="22"><use href="#i-voice"/></svg></span><span class="rt">语音服务</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="技能"><span class="ri"><svg width="22" height="22"><use href="#i-spark"/></svg></span><span class="rt">技能</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="连接器"><span class="ri"><svg width="22" height="22"><use href="#i-plug"/></svg></span><span class="rt">连接器</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
@@ -374,6 +378,30 @@ svg{display:block}
         <div class="set-body" id="peBody"></div>
       </section>
 
+      <section class="settings search" id="search">
+        <div class="set-hd">
+          <button class="set-back" id="srBack" aria-label="返回"><svg width="20" height="20"><use href="#i-chevL"/></svg></button>
+          <h2>网络搜索</h2>
+          <span class="set-hd-r"></span>
+        </div>
+        <div class="set-body">
+          <div class="set-sec">搜索提供商</div>
+          <div class="set-card" id="srList"></div>
+          <div class="set-sec">API Key</div>
+          <div class="set-card">
+            <div class="pv-f"><label id="srKeyLabel">API Key</label><input id="srKey" type="password" placeholder="粘贴所选提供商的密钥" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+          </div>
+          <div class="set-sec">结果数量</div>
+          <div class="set-card"><div class="seg" id="srMax" style="margin:10px 12px"><button data-max="3">3</button><button data-max="5">5</button><button data-max="10">10</button></div></div>
+          <div class="set-sec">诊断</div>
+          <div class="set-card">
+            <div class="pv-diag-row"><button class="pv-mini" id="srTest">测试搜索</button></div>
+            <div class="pv-diag" id="srDiag">填写密钥后可发起一次真实搜索测试。</div>
+          </div>
+          <div class="pv-hint">启用后，对话按「思考 → 调用搜索 → 再思考 → 回答」的链路进行，搜索过程可折叠查看。可在输入框的「联网」胶囊上开关。</div>
+        </div>
+      </section>
+
       <div class="sheet-scrim" id="csScrim"></div>
       <section class="sheet" id="composerSheet">
         <div class="sheet-hd"><h3>模型与思考深度</h3><button class="sheet-x" id="csClose" aria-label="关闭"><svg><use href="#i-close"/></svg></button></div>
@@ -424,15 +452,29 @@ function md(t){
 }
 
 function thinkLabel(m){
-  if(!m.text && (state.busy || m._fin)) return '思考中…';
+  const searches=(m.steps||[]).filter(s=>s.k==='s');
+  const pages=searches.reduce((a,s)=>a+(s.n||0),0);
+  const searchPart=searches.length?` · 搜索了 ${pages||searches.length} 个网页`:'';
+  if(!m.text && (state.busy || m._fin)) return searches.length?'搜索中…':'思考中…';
   const s = m.thinkMs ? Math.max(1, Math.round(m.thinkMs/1000)) : 0;
-  return '已思考' + (s ? `（用时${s}秒）` : '');
+  return '已思考' + (s ? `（用时${s}秒）` : '') + searchPart;
+}
+function traceHtml(m){
+  return (m.steps||[]).map(st=>{
+    if(st.k==='t') return st.s ? md(st.s) : '';
+    if(st.k==='s') return `<p class="th-s"><svg class="th-si"><use href="#i-search"/></svg><span>搜索「${esc(st.q)}」· ${st.n} 条结果</span></p>`;
+    return '';
+  }).join('');
 }
 function aiInner(m){
   let inner='';
-  if(m.reasoning) inner += `<details class="think"${(!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
+  const hasTrace = !!m.reasoning || (m.steps||[]).some(s=> s.k==='s' || (s.k==='t'&&s.s));
+  if(hasTrace){
+    let body = (m.reasoning?md(m.reasoning):'') + (m.steps?traceHtml(m):'');
+    inner += `<details class="think"${(!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${body}</div></details>`;
+  }
   if(m.text) inner += md(m.text);
-  else if(m.pending && !m.reasoning) inner += '<span class="typing"><i></i><i></i><i></i></span>';
+  else if(m.pending && !hasTrace) inner += '<span class="typing"><i></i><i></i><i></i></span>';
   return inner;
 }
 function render(){
@@ -527,21 +569,30 @@ function send(text){
   $('#input').value=''; autoGrow(); syncSend(); render();
   chatReply(prov);
 }
-async function chatReply(prov){
-  state.busy = true; syncSend();
-  const t0 = Date.now();
-  const m = {role:'ai', text:'', reasoning:'', _tr:'', _tt:'', _sr:0, _st:0, thinkMs:0, pending:true};
-  state.msgs.push(m); render();
-  const model = prov.model || modelsFor(prov)[0] || '';
+function baseSys(useSearch){
   let sys = '你是 Lumi，一个简洁友好的 AI 助手。请使用与用户相同的语言回答，并在合适时输出 Markdown。';
   if(DEPTH==='off') sys += '\n\n请直接给出最终答案，省略冗长的推理过程。';
   else if(DEPTH==='deep') sys += '\n\n请先逐步、深入地思考，再给出完整严谨的答案。';
-  const messages = [{role:'system', content:sys}]
-    .concat(state.msgs.filter(x=>!x.pending).map(x=>({role:x.role==='me'?'user':'assistant', content:x.text})));
+  if(useSearch) sys += '\n\n你拥有联网搜索能力。当且仅当需要获取实时或外部信息时，只输出一个代码块，内容为 JSON：{"action":"search","query":"检索词"}，除该代码块外不要输出任何其它文字。收到 OBSERVATION 后，先用一句话说明接下来的思路，再决定继续搜索或直接给出最终答案。最终答案请使用普通 Markdown 文本，不要使用该代码块格式。';
+  return sys;
+}
+async function chatReply(prov){
+  state.busy = true; syncSend();
+  const t0 = Date.now();
+  const m = {role:'ai', text:'', reasoning:'', _tr:'', _tt:'', _sr:0, _st:0, thinkMs:0, pending:true, steps:[]};
+  state.msgs.push(m); render();
+  const model = prov.model || modelsFor(prov)[0] || '';
+  const useSearch = SEARCH.enabled && searchReady();
+  const messages = [{role:'system', content:baseSys(useSearch)}]
+    .concat(state.msgs.filter(x=>x!==m && !x.pending).map(x=>({role:x.role==='me'?'user':'assistant', content:x.text})));
+  const fin=()=>{ if(!m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; m.pending=false; syncSend(); paintLast(); };
+  if(!useSearch){ await runPlain(prov,m,model,messages,t0,fin); return; }
+  await runAgent(prov,m,model,messages,t0,fin);
+}
+async function runPlain(prov,m,model,messages,t0,fin){
   const payload = {model, messages, stream:true};
   if(prov.thinkingApi==='thinking') payload.thinking = {type: DEPTH==='off'?'disabled':'enabled'};
   const body = JSON.stringify(payload);
-  const fin=()=>{ if((m.reasoning||m._tr) && !m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; syncSend(); };
   try{
     await request({ id:'c'+Date.now(), url:chatUrl(prov), method:'POST', mode:'sse', headers:authHeaders(prov), body,
       onDelta:(d)=>{ if(d.r) m._tr+=d.r; if(d.c){ if(!m._tt && m._tr && !m.thinkMs) m.thinkMs=Date.now()-t0; m._tt+=d.c; } ensureReveal(); } });
@@ -552,6 +603,43 @@ async function chatReply(prov){
     m._tt='请求失败：'+(e.message||e)+'\n\n请检查 设置 → 提供商 的 Base URL、API Key 与模型，以及网络连接。';
     m.text=m._tt; m._st=m._tt.length; render(); fin();
   }
+}
+async function runAgent(prov,m,model,messages,t0,fin){
+  const msgs = messages.slice();
+  const MAXT = 4;
+  let done = false;
+  const fail=(e)=>{ m._tt=''; m._st=0; m.text='请求失败：'+(e.message||e)+'\n\n请检查 设置 → 提供商 与 网络搜索 的密钥配置，以及网络连接。'; render(); fin(); };
+  try{
+    for(let turn=0; turn<MAXT && !done; turn++){
+      const step = {k:'t', s:''}; m.steps.push(step);
+      const payload = {model, messages:msgs, stream:true};
+      if(prov.thinkingApi==='thinking') payload.thinking = {type: DEPTH==='off'?'disabled':'enabled'};
+      let content = ''; let isAction = null;
+      await request({ id:'a'+Date.now()+'_'+turn, url:chatUrl(prov), method:'POST', mode:'sse', headers:authHeaders(prov), body:JSON.stringify(payload),
+        onDelta:(d)=>{
+          if(d.r){ step.s+=d.r; m.pending=false; paintLast(); }
+          if(d.c){
+            if(isAction===null){ const t=d.c.trimStart(); if(!t) return; isAction = t[0]==='`'; }
+            if(isAction){ content+=d.c; }
+            else { if(!m._tt && !m.thinkMs) m.thinkMs=Date.now()-t0; m._tt+=d.c; ensureReveal(); }
+          }
+        } });
+      if(isAction){
+        msgs.push({role:'assistant', content});
+        const act = parseSearch(content);
+        if(!act){ m._tt = m._tt || stripFence(content) || '（未能解析检索请求）'; done=true; }
+        else{
+          const res = await doSearch(act.query);
+          m.steps.push({k:'s', q:act.query, n:res.length}); paintLast();
+          msgs.push({role:'user', content:'OBSERVATION:\n'+formatObservation(res)});
+        }
+      } else {
+        done = true;
+      }
+    }
+    if(!m._tt && !m.text){ m._tt = '（模型未返回内容）'; }
+    if(m._sr>=m._tr.length && m._st>=m._tt.length) fin(); else { m._fin=fin; ensureReveal(); }
+  }catch(e){ fail(e); }
 }
 
 let _tt;
@@ -698,6 +786,58 @@ function deleteProvider(){
   saveP(); renderProviders(); closeProviderEdit(); toast('已删除');
 }
 
+/* ===== web search (Tavily / Exa / AnySearch) ===== */
+const SEARCH_PROVIDERS = {
+  tavily:{ name:'Tavily', c:'#0a7f6b', keyLabel:'Tavily API Key', ph:'tvly-…',
+    run:async(key,query,max)=>{
+      const body=JSON.stringify({query,max_results:max,search_depth:'basic',include_answer:false});
+      const j=await request({id:'s'+Date.now(),url:'https://api.tavily.com/search',method:'POST',mode:'json',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body});
+      return (j.results||[]).map(r=>({title:r.title,url:r.url,content:r.content}));
+    }},
+  exa:{ name:'Exa', c:'#6b4df0', keyLabel:'Exa API Key', ph:'粘贴 Exa 密钥',
+    run:async(key,query,max)=>{
+      const body=JSON.stringify({query,numResults:max,type:'auto',contents:{text:true}});
+      const j=await request({id:'s'+Date.now(),url:'https://api.exa.ai/search',method:'POST',mode:'json',
+        headers:{'Content-Type':'application/json','x-api-key':key},body});
+      return (j.results||[]).map(r=>({title:r.title,url:r.url,text:r.text,content:r.text}));
+    }},
+  anysearch:{ name:'AnySearch', c:'#4d6bfe', keyLabel:'AnySearch API Key', ph:'as_sk_…',
+    run:async(key,query,max)=>{
+      const body=JSON.stringify({query,top_k:max});
+      const j=await request({id:'s'+Date.now(),url:'https://api.anysearch.com/v1/search',method:'POST',mode:'json',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body});
+      const data=j.data||j; const list=data.results||data.items||[];
+      return list.map(r=>({title:r.title||r.name,url:r.url||r.link,content:r.content||r.snippet||r.text}));
+    }},
+};
+let SEARCH = {provider:'tavily',key:'',max:5,enabled:false};
+(function initSearch(){ try{ const r=lsGet('lumi.search'); if(r) SEARCH=Object.assign(SEARCH,JSON.parse(r)); }catch(e){} })();
+function saveSearch(){ lsSet('lumi.search',JSON.stringify(SEARCH)); }
+function searchReady(){ return !!(SEARCH.key && SEARCH_PROVIDERS[SEARCH.provider]); }
+async function doSearch(query){
+  const sp=SEARCH_PROVIDERS[SEARCH.provider]; if(!sp || !SEARCH.key) return [];
+  try{ return await sp.run(SEARCH.key, query, SEARCH.max||5); }catch(e){ return []; }
+}
+function parseSearch(content){
+  const fence=/```(?:json)?\s*([\s\S]*?)```/i.exec(content);
+  const raw=(fence?fence[1]:content).trim();
+  try{ const j=JSON.parse(raw); const q=j.query||j.q||j.search;
+    if(q) return {query:String(q)}; return null;
+  }catch(e){
+    const m2=/"(?:query|q|search)"\s*:\s*"([^"]+)"/.exec(raw);
+    return m2?{query:m2[1]}:null;
+  }
+}
+function stripFence(c){ return (c||'').replace(/```[a-z]*\s*/gi,'').replace(/```/g,'').trim(); }
+function formatObservation(res){
+  if(!res || !res.length) return '未找到相关结果。';
+  return res.slice(0,SEARCH.max||5).map((r,i)=>{
+    const body=(r.content||r.text||'').replace(/\s+/g,' ').slice(0,400);
+    return `[${i+1}] ${r.title||r.url||''}\n${r.url||''}\n${body}`;
+  }).join('\n\n');
+}
+
 /* ===== model selection ===== */
 function renderModels(){
   const p = activeProvider(), L = $('#mdList');
@@ -746,6 +886,37 @@ async function pullModels(){
   }catch(e){ toast('拉取失败：'+(e.message||e)); }
 }
 
+/* ===== search settings panel ===== */
+function renderSearch(){
+  const L=$('#srList'); if(!L) return;
+  L.innerHTML = Object.entries(SEARCH_PROVIDERS).map(([id,sp])=>`
+    <button class="set-row" data-sid="${id}">
+      <span class="ri"><span class="pv-badge" style="background:${sp.c}">${esc(sp.name.slice(0,1))}</span></span>
+      <span class="rt"><b>${esc(sp.name)}</b><span class="rs">${SEARCH.provider===id?(SEARCH.key?'默认 · 已填密钥':'默认 · 未填密钥'):''}</span></span>
+      ${SEARCH.provider===id?'<svg class="pv-check"><use href="#i-check"/></svg>':''}
+    </button>`).join('');
+  const sp = SEARCH_PROVIDERS[SEARCH.provider] || SEARCH_PROVIDERS.tavily;
+  $('#srKeyLabel').textContent = sp.keyLabel;
+  const k=$('#srKey'); if(k){ k.value=SEARCH.key||''; k.placeholder=sp.ph; }
+  document.querySelectorAll('#srMax [data-max]').forEach(b=>b.classList.toggle('on', (+b.dataset.max)===(SEARCH.max||5)));
+  const a=$('#setSearchVal'); if(a) a.textContent = SEARCH.enabled ? (searchReady()?'已开启':'未配置') : '关闭';
+}
+function openSearch(){ renderSearch(); $('#search').classList.add('on'); }
+function closeSearch(){ $('#search').classList.remove('on'); }
+function updateWebTg(){ const b=$('#webTg'); if(b) b.classList.toggle('on', !!(SEARCH.enabled && searchReady())); }
+async function testSearch(){
+  const out=$('#srDiag'); if(!out) return;
+  if(!searchReady()){ out.className='pv-diag err'; out.textContent='请先选择提供商并填写 API Key'; return; }
+  out.className='pv-diag'; out.textContent='正在搜索…';
+  const t0=Date.now();
+  try{
+    const res = await SEARCH_PROVIDERS[SEARCH.provider].run(SEARCH.key, 'OpenAI 最新模型', SEARCH.max||5);
+    if(!res.length){ out.className='pv-diag err'; out.textContent='✕ 接口未返回结果'; return; }
+    out.className='pv-diag ok';
+    out.textContent = `✓ ${res.length} 条结果 · ${Date.now()-t0}ms\n` + res.slice(0,3).map((r,i)=>`${i+1}. ${(r.title||r.url||'').slice(0,42)}`).join('\n');
+  }catch(e){ out.className='pv-diag err'; out.textContent='✕ '+(e.message||e); }
+}
+
 /* events */
 $('#sendBtn').addEventListener('click', ()=>send());
 $('#input').addEventListener('input', ()=>{ autoGrow(); syncSend(); });
@@ -755,7 +926,7 @@ $('#drawerNew').addEventListener('click', ()=>{ state.msgs=[]; render(); closeDr
 $('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
 $('#voiceBtn').addEventListener('click', ()=>toast('按住说话'));
 function openSettings(){ $('#settings').classList.add('on'); closeDrawer(); }
-function closeSettings(){ $('#settings').classList.remove('on'); closeProviders(); closeProviderEdit(); closeModels(); }
+function closeSettings(){ $('#settings').classList.remove('on'); closeProviders(); closeProviderEdit(); closeModels(); closeSearch(); }
 $('#drawerSettings').addEventListener('click', openSettings);
 $('#setBack').addEventListener('click', closeSettings);
 $('#pvBack').addEventListener('click', closeProviders);
@@ -773,7 +944,18 @@ $('#csScrim').addEventListener('click', closeComposerSheet);
 $('#csModels').addEventListener('click', e=>{ const r=e.target.closest('[data-cmodel]'); if(r) setModel(r.dataset.cmodel); });
 $('#csDepth').addEventListener('click', e=>{ const b=e.target.closest('[data-depth]'); if(b) setDepth(b.dataset.depth); });
 $('#csProv').addEventListener('click', ()=>{ closeComposerSheet(); openSettings(); openProviders(); });
+$('#srBack').addEventListener('click', closeSearch);
+$('#srList').addEventListener('click', e=>{ const r=e.target.closest('[data-sid]'); if(r){ SEARCH.provider=r.dataset.sid; saveSearch(); renderSearch(); updateWebTg(); } });
+$('#srKey').addEventListener('input', e=>{ SEARCH.key=e.target.value.trim(); saveSearch(); updateWebTg(); const a=$('#setSearchVal'); if(a) a.textContent = SEARCH.enabled?(searchReady()?'已开启':'未配置'):'关闭'; });
+$('#srMax').addEventListener('click', e=>{ const b=e.target.closest('[data-max]'); if(b){ SEARCH.max=+b.dataset.max; saveSearch(); renderSearch(); } });
+$('#srTest').addEventListener('click', testSearch);
+$('#webTg').addEventListener('click', ()=>{
+  if(!searchReady()){ toast('请先在 设置 → 网络搜索 填写 API Key'); openSettings(); openSearch(); return; }
+  SEARCH.enabled=!SEARCH.enabled; saveSearch(); updateWebTg(); renderSearch(); toast(SEARCH.enabled?'已开启联网搜索':'已关闭联网搜索');
+});
 renderProviders();
+updateWebTg();
+(function initSearchVal(){ const a=$('#setSearchVal'); if(a) a.textContent = SEARCH.enabled?(searchReady()?'已开启':'未配置'):'关闭'; })();
 $('#menuBtn').addEventListener('click', ()=>{ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); });
 function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
 $('#scrim').addEventListener('click', closeDrawer);
@@ -781,7 +963,7 @@ document.addEventListener('click', e=>{
   const h = e.target.closest('[data-h]');
   if(h){ send(h.dataset.h); closeDrawer(); return; }
   const o = e.target.closest('[data-open]');
-  if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); return; }
+  if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); else if(o.dataset.open==='search') openSearch(); return; }
   const s = e.target.closest('[data-t]');
   if(s){ toast(s.dataset.t); }
 });
