@@ -424,7 +424,7 @@ function md(t){
 }
 
 function thinkLabel(m){
-  if(!m.text && state.busy) return '思考中…';
+  if(!m.text && (state.busy || m._fin)) return '思考中…';
   const s = m.thinkMs ? Math.max(1, Math.round(m.thinkMs/1000)) : 0;
   return '已思考' + (s ? `（用时${s}秒）` : '');
 }
@@ -440,6 +440,22 @@ function render(){
     return `<div class="m ai">${inner}</div>`;
   }).join('');
   $('#msgs').scrollTop = 1e6;
+}
+let _rafId=null;
+function ensureReveal(){
+  if(_rafId!=null) return;
+  const loop=()=>{
+    _rafId=null; let back=false;
+    for(const m of state.msgs){
+      if(!m||m.role!=='ai'||m._tr==null) continue;
+      if(m._sr<m._tr.length){ const b=m._tr.length-m._sr; m._sr=Math.min(m._tr.length,m._sr+Math.max(1,Math.ceil(b/6))); m.reasoning=m._tr.slice(0,m._sr); m.pending=false; back=true; }
+      else if(m._st<m._tt.length){ const b=m._tt.length-m._st; m._st=Math.min(m._tt.length,m._st+Math.max(1,Math.ceil(b/6))); m.text=m._tt.slice(0,m._st); m.pending=false; back=true; }
+    }
+    if(back){ render(); _rafId=requestAnimationFrame(loop); return; }
+    let fin=false; for(const m of state.msgs){ if(m._fin){ const f=m._fin; m._fin=null; f(); fin=true; } }
+    if(fin) render();
+  };
+  _rafId=requestAnimationFrame(loop);
 }
 function syncSend(){
   const has = !!$('#input').value.trim() && !state.busy;
@@ -506,7 +522,7 @@ function send(text){
 async function chatReply(prov){
   state.busy = true; syncSend();
   const t0 = Date.now();
-  const m = {role:'ai', text:'', reasoning:'', thinkMs:0, pending:true};
+  const m = {role:'ai', text:'', reasoning:'', _tr:'', _tt:'', _sr:0, _st:0, thinkMs:0, pending:true};
   state.msgs.push(m); render();
   const model = prov.model || modelsFor(prov)[0] || '';
   let sys = '你是 Lumi，一个简洁友好的 AI 助手。请使用与用户相同的语言回答，并在合适时输出 Markdown。';
@@ -517,16 +533,17 @@ async function chatReply(prov){
   const payload = {model, messages, stream:true};
   if(prov.thinkingApi==='thinking') payload.thinking = {type: DEPTH==='off'?'disabled':'enabled'};
   const body = JSON.stringify(payload);
+  const fin=()=>{ if((m.reasoning||m._tr) && !m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; syncSend(); };
   try{
     await request({ id:'c'+Date.now(), url:chatUrl(prov), method:'POST', mode:'sse', headers:authHeaders(prov), body,
-      onDelta:(d)=>{ m.pending=false; if(d.r) m.reasoning+=d.r; if(d.c){ if(!m.text && m.reasoning && !m.thinkMs) m.thinkMs=Date.now()-t0; m.text+=d.c; } render(); } });
-    m.pending=false; if(m.reasoning && !m.thinkMs) m.thinkMs=Date.now()-t0; if(!m.text && !m.reasoning) m.text='（模型未返回内容）'; render();
+      onDelta:(d)=>{ if(d.r) m._tr+=d.r; if(d.c){ if(!m._tt && m._tr && !m.thinkMs) m.thinkMs=Date.now()-t0; m._tt+=d.c; } ensureReveal(); } });
+    if(!m._tr && !m._tt) m._tt='（模型未返回内容）';
+    if(m._sr>=m._tr.length && m._st>=m._tt.length) fin(); else { m._fin=fin; ensureReveal(); }
   }catch(e){
-    m.pending=false;
-    m.text='请求失败：'+(e.message||e)+'\n\n请检查 设置 → 提供商 的 Base URL、API Key 与模型，以及网络连接。';
-    render();
+    m._tr=''; m.reasoning=''; m._sr=0;
+    m._tt='请求失败：'+(e.message||e)+'\n\n请检查 设置 → 提供商 的 Base URL、API Key 与模型，以及网络连接。';
+    m.text=m._tt; m._st=m._tt.length; render(); fin();
   }
-  state.busy = false; syncSend();
 }
 
 let _tt;
