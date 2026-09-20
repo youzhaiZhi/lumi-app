@@ -424,7 +424,7 @@ function md(t){
 }
 
 function thinkLabel(m){
-  if(m.pending && !m.text) return '思考中…';
+  if(!m.text && state.busy) return '思考中…';
   const s = m.thinkMs ? Math.max(1, Math.round(m.thinkMs/1000)) : 0;
   return '已思考' + (s ? `（用时${s}秒）` : '');
 }
@@ -434,7 +434,7 @@ function render(){
   $('#msgs').innerHTML = state.msgs.map(m=>{
     if(m.role==='me') return `<div class="m me">${md(m.text)}</div>`;
     let inner='';
-    if(m.reasoning) inner += `<details class="think"${(m.pending&&!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
+    if(m.reasoning) inner += `<details class="think"${(!m.text)?' open':''}><summary><span>${thinkLabel(m)}</span><svg class="th-cv"><use href="#i-chevD"/></svg></summary><div class="think-b">${md(m.reasoning)}</div></details>`;
     if(m.text) inner += md(m.text);
     else if(m.pending && !m.reasoning) inner += '<span class="typing"><i></i><i></i><i></i></span>';
     return `<div class="m ai">${inner}</div>`;
