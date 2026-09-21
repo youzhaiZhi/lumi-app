@@ -65,6 +65,10 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (_) {
       return;
     }
+    if (cfg['type'] == 'exit') {
+      await SystemNavigator.pop();
+      return;
+    }
     if (cfg['type'] == 'native') {
       await _onNative(cfg);
       return;
@@ -150,14 +154,9 @@ class _ChatScreenState extends State<ChatScreen> {
       canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        bool handled = false;
-        try {
-          final r = await _controller.runJavaScriptReturningFuture(
-            'window.__lumi && window.__lumi.onBack ? !!window.__lumi.onBack() : false',
-          );
-          handled = r == true;
-        } catch (_) {}
-        if (!handled) await SystemNavigator.pop();
+        _controller.runJavaScript(
+          'window.__lumi && window.__lumi.onBack && window.__lumi.onBack();',
+        );
       },
       child: Scaffold(
         body: WebViewWidget(controller: _controller),
