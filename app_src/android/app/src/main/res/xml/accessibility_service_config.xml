@@ -5,5 +5,5 @@
     android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews"
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="true"
-    android:description="允许 Lumi 读取当前界面的可点击控件，并按你的指令执行点击、输入和滚动。"
+    android:description="@string/lumi_a11y_description"
     android:notificationTimeout="120" />
