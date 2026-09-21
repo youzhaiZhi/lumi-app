@@ -122,10 +122,14 @@ svg{display:block}
 }
 .drawer .lb{font-size:12px;color:var(--sub);padding:8px 12px 6px}
 .drawer .it{
-  width:100%;text-align:left;padding:11px 12px;border-radius:10px;font-size:14px;color:#3a3f47;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:10px 6px 10px 12px;border-radius:10px;font-size:14px;color:#3a3f47;
 }
+.drawer .it .itt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .drawer .it:active{background:#f4f5f7}
+.drawer .it.on{background:var(--blue-soft);color:var(--blue);font-weight:500}
+.drawer .itx{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#c4c8d0}
+.drawer .itx:active{background:#e7e9ee;color:#8a919f}
+.drawer .hempty{font-size:13px;color:var(--sub);padding:6px 12px 2px}
 
 .toast{position:absolute;left:50%;bottom:130px;transform:translate(-50%,10px);z-index:60;padding:8px 15px;border-radius:99px;background:rgba(31,35,41,.92);color:#fff;font-size:13px;opacity:0;pointer-events:none;transition:all .25s}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -435,8 +439,66 @@ const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state = { msgs:[], busy:false, think:false, web:false };
 
-const HIST = ['重构支付网关的错误处理','Q3 用户留存归因','发布会新闻稿','本周计划怎么排'];
-$('#hist').innerHTML = HIST.map(t=>`<button class="it" data-h="${esc(t)}">${t}</button>`).join('');
+/* ===== conversations (persisted to localStorage) ===== */
+let CONVS = [];
+let CID = '';
+function loadConvs(){
+  try{ const r=lsGet('lumi.convs'); if(r){ const a=JSON.parse(r); if(Array.isArray(a)) CONVS=a.filter(c=>c&&c.id&&Array.isArray(c.msgs)); } }catch(e){ CONVS=[]; }
+  CID = lsGet('lumi.activeConv') || '';
+  if(!CONVS.some(c=>c.id===CID)) CID = CONVS.length ? CONVS[0].id : '';
+}
+function saveConvs(){ lsSet('lumi.convs', JSON.stringify(CONVS)); lsSet('lumi.activeConv', CID||''); }
+function deriveTitle(msgs){ const u=msgs.find(m=>m.role==='me'); let t=((u&&u.text)||'').replace(/\s+/g,' ').trim(); if(!t) t='新对话'; return t.length>24 ? t.slice(0,24)+'…' : t; }
+function serializeMsgs(){
+  return state.msgs.filter(m=>!m.pending).map(m=>{
+    const o={role:m.role, text: m.role==='me' ? (m.text||'') : ((m._tt!=null?m._tt:m.text)||'')};
+    if(m.role==='ai'){
+      const r=(m._tr!=null?m._tr:m.reasoning)||'';
+      if(r) o.reasoning=r;
+      if(m.steps && m.steps.length) o.steps=m.steps.map(s=> s.k==='s'?{k:'s',q:s.q,n:s.n}:{k:'t',s:s.s});
+    }
+    return o;
+  });
+}
+function deserializeMsg(o){
+  const reasoning=o.reasoning||'', text=o.text||'';
+  return {role:o.role, text, reasoning, _tr:reasoning, _sr:reasoning.length, _tt:text, _st:text.length, thinkMs:0, pending:false, steps:(o.steps||[]).map(s=>({...s}))};
+}
+function currentConv(){ return CONVS.find(c=>c.id===CID) || null; }
+function showConv(c){ state.msgs = (c?c.msgs:[]).map(deserializeMsg); render(); }
+function commit(){
+  const msgs=serializeMsgs();
+  if(!msgs.length) return;
+  let c=currentConv();
+  if(!c){ c={id:'k'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), title:deriveTitle(msgs), createdAt:Date.now(), updatedAt:Date.now(), msgs:[]}; CONVS.unshift(c); CID=c.id; }
+  c.msgs=msgs; c.updatedAt=Date.now();
+  saveConvs(); renderHist();
+}
+function guardBusy(){ if(state.busy){ toast('正在回复，请稍候'); return true; } return false; }
+function openConv(id){
+  if(guardBusy()) return;
+  if(id===CID){ closeDrawer(); return; }
+  commit();
+  const c=CONVS.find(x=>x.id===id); if(!c) return;
+  CID=id; saveConvs(); showConv(c); renderHist(); closeDrawer();
+}
+function newChat(){
+  if(guardBusy()) return;
+  commit();
+  CID=''; saveConvs(); state.msgs=[]; render(); renderHist();
+}
+function delConv(id){
+  if(guardBusy()) return;
+  CONVS=CONVS.filter(c=>c.id!==id);
+  if(CID===id){ CID = CONVS.length?CONVS[0].id:''; showConv(currentConv()); }
+  saveConvs(); renderHist();
+}
+function renderHist(){
+  const L=$('#hist'); if(!L) return;
+  const list=CONVS.slice().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  if(!list.length){ L.innerHTML='<div class="hempty">还没有对话，发一条消息开始吧</div>'; return; }
+  L.innerHTML=list.map(c=>`<div class="it${c.id===CID?' on':''}" data-cid="${c.id}"><span class="itt">${esc(c.title||'新对话')}</span><button class="itx" data-del="${c.id}" aria-label="删除对话"><svg width="15" height="15"><use href="#i-close"/></svg></button></div>`).join('');
+}
 
 function md(t){
   let out=''; const parts=t.split(/```/);
@@ -574,6 +636,7 @@ function send(text){
   if(!prov.key){ toast('请先在 设置 → 提供商 填写 '+prov.name+' 的 API Key'); return; }
   state.msgs.push({role:'me', text:v});
   $('#input').value=''; autoGrow(); syncSend(); render();
+  commit();
   chatReply(prov);
 }
 function baseSys(useSearch){
@@ -592,7 +655,7 @@ async function chatReply(prov){
   const useSearch = SEARCH.enabled && searchReady();
   const messages = [{role:'system', content:baseSys(useSearch)}]
     .concat(state.msgs.filter(x=>x!==m && !x.pending).map(x=>({role:x.role==='me'?'user':'assistant', content:x.text})));
-  const fin=()=>{ if(!m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; m.pending=false; syncSend(); paintLast(); };
+  const fin=()=>{ if(!m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; m.pending=false; syncSend(); paintLast(); commit(); };
   if(!useSearch){ await runPlain(prov,m,model,messages,t0,fin); return; }
   await runAgent(prov,m,model,messages,t0,fin);
 }
@@ -932,8 +995,12 @@ async function testSearch(){
 $('#sendBtn').addEventListener('click', ()=>send());
 $('#input').addEventListener('input', ()=>{ autoGrow(); syncSend(); });
 $('#input').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
-$('#newBtn').addEventListener('click', ()=>{ state.msgs=[]; render(); });
-$('#drawerNew').addEventListener('click', ()=>{ state.msgs=[]; render(); closeDrawer(); });
+$('#newBtn').addEventListener('click', newChat);
+$('#drawerNew').addEventListener('click', ()=>{ newChat(); closeDrawer(); });
+$('#hist').addEventListener('click', e=>{
+  const d=e.target.closest('[data-del]'); if(d){ e.stopPropagation(); delConv(d.dataset.del); return; }
+  const it=e.target.closest('[data-cid]'); if(it) openConv(it.dataset.cid);
+});
 $('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
 $('#voiceBtn').addEventListener('click', ()=>toast('按住说话'));
 function openSettings(){ $('#settings').classList.add('on'); closeDrawer(); }
@@ -966,12 +1033,11 @@ $('#srEnableRow').addEventListener('click', ()=>{
 });
 renderProviders();
 (function initSearchVal(){ const a=$('#setSearchVal'); if(a) a.textContent = SEARCH.enabled?(searchReady()?'已开启':'未配置'):'关闭'; })();
+loadConvs(); showConv(currentConv()); renderHist();
 $('#menuBtn').addEventListener('click', ()=>{ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); });
 function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
 $('#scrim').addEventListener('click', closeDrawer);
 document.addEventListener('click', e=>{
-  const h = e.target.closest('[data-h]');
-  if(h){ send(h.dataset.h); closeDrawer(); return; }
   const o = e.target.closest('[data-open]');
   if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); else if(o.dataset.open==='search') openSearch(); return; }
   const s = e.target.closest('[data-t]');
