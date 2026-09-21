@@ -163,6 +163,7 @@ svg{display:block}
 .models{z-index:36}
 .provider-edit{z-index:37}
 .search{z-index:37}
+.perms{z-index:37}
 .md-custom{display:flex;align-items:center;gap:8px}
 .md-custom input{flex:1;min-width:0;border:none;background:none;font-size:14.5px;color:#1f2329;font-family:inherit}
 .md-custom input::placeholder{color:#b6bac2}
@@ -268,6 +269,7 @@ svg{display:block}
   <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.5 12h-2M21.5 12h-2M6 6l-1.4-1.4M19.4 19.4L18 18M18 6l1.4-1.4M4.6 19.4L6 18"/></g></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v5M12 7.8h.01"/></g></symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1v.3a2 2 0 11-4 0v-.2a1.6 1.6 0 00-2.7-1.1l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00-1.1-2.7H3a2 2 0 110-4h.2a1.6 1.6 0 001.1-2.7l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 002.7-1.1V3a2 2 0 114 0v.2a1.6 1.6 0 002.7 1.1l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 001.1 2.7h.3a2 2 0 110 4h-.2a1.6 1.6 0 00-1.5 1z"/></g></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.8v5.1c0 4.4-2.9 7.4-7 9.1-4.1-1.7-7-4.7-7-9.1V5.8L12 3z"/><path d="M9 11.8l2 2 4-4.1"/></g></symbol>
   <symbol id="i-chevR" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-chevL" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
@@ -337,6 +339,7 @@ svg{display:block}
           </div>
           <div class="set-sec">应用</div>
           <div class="set-card">
+            <button class="set-row" data-open="perms"><span class="ri"><svg width="22" height="22"><use href="#i-shield"/></svg></span><span class="rt">权限管理</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="语言"><span class="ri"><svg width="22" height="22"><use href="#i-globe"/></svg></span><span class="rt">语言</span><span class="rv">中文 (简体中文)</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
             <button class="set-row" data-t="外观"><span class="ri"><svg width="22" height="22"><use href="#i-sun"/></svg></span><span class="rt">外观</span><span class="rv">系统</span><svg class="ra" width="18" height="18"><use href="#i-chevR"/></svg></button>
           </div>
@@ -409,7 +412,28 @@ svg{display:block}
             <div class="pv-diag-row"><button class="pv-mini" id="srTest">测试搜索</button></div>
             <div class="pv-diag" id="srDiag">填写密钥后可发起一次真实搜索测试。</div>
           </div>
-          <div class="pv-hint">启用后，对话按「思考 → 调用搜索 → 再思考 → 回答」的链路进行，搜索过程可折叠查看。可在输入框的「联网」胶囊上开关。</div>
+          <div class="pv-hint">启用后，对话按「思考 → 调用搜索 → 再思考 → 回答」的链路进行，搜索过程可折叠查看。可在 设置 → 网络搜索 中开关。</div>
+        </div>
+      </section>
+
+      <section class="settings perms" id="perms">
+        <div class="set-hd">
+          <button class="set-back" id="pmBack" aria-label="返回"><svg width="20" height="20"><use href="#i-chevL"/></svg></button>
+          <h2>权限管理</h2>
+          <span class="set-hd-r"></span>
+        </div>
+        <div class="set-body">
+          <div class="set-sec">系统权限</div>
+          <div class="set-card">
+            <div class="set-row"><span class="ri"><svg width="22" height="22"><use href="#i-plug"/></svg></span><span class="rt">网络访问<span class="rs">向 AI 提供商与搜索接口发起请求</span></span><span class="rv">已允许</span></div>
+          </div>
+          <div class="set-sec">应用内权限</div>
+          <div class="set-card">
+            <button class="set-row" data-perm="storage"><span class="ri"><svg width="22" height="22"><use href="#i-server"/></svg></span><span class="rt">本地存储<span class="rs">保存对话、提供商与密钥到本机</span></span><span class="sw" data-sw="storage"></span></button>
+            <button class="set-row" data-perm="mic"><span class="ri"><svg width="22" height="22"><use href="#i-voice"/></svg></span><span class="rt">麦克风<span class="rs">语音输入</span></span><span class="sw" data-sw="mic"></span></button>
+            <button class="set-row" data-perm="notify"><span class="ri"><svg width="22" height="22"><use href="#i-vol"/></svg></span><span class="rt">通知<span class="rs">回复完成时提醒</span></span><span class="sw" data-sw="notify"></span></button>
+          </div>
+          <div class="pv-hint">权限开关仅在本机记录，用于控制 Lumi 的功能。关闭「本地存储」后，新的对话内容将不再保存。</div>
         </div>
       </section>
 
@@ -467,6 +491,7 @@ function deserializeMsg(o){
 function currentConv(){ return CONVS.find(c=>c.id===CID) || null; }
 function showConv(c){ state.msgs = (c?c.msgs:[]).map(deserializeMsg); render(); }
 function commit(){
+  if(!PERMS.storage) return;
   const msgs=serializeMsgs();
   if(!msgs.length) return;
   let c=currentConv();
@@ -655,7 +680,7 @@ async function chatReply(prov){
   const useSearch = SEARCH.enabled && searchReady();
   const messages = [{role:'system', content:baseSys(useSearch)}]
     .concat(state.msgs.filter(x=>x!==m && !x.pending).map(x=>({role:x.role==='me'?'user':'assistant', content:x.text})));
-  const fin=()=>{ if(!m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; m.pending=false; syncSend(); paintLast(); commit(); };
+  const fin=()=>{ if(!m.thinkMs) m.thinkMs=Date.now()-t0; state.busy=false; m.pending=false; syncSend(); paintLast(); commit(); if(PERMS.notify) toast('回复已完成'); };
   if(!useSearch){ await runPlain(prov,m,model,messages,t0,fin); return; }
   await runAgent(prov,m,model,messages,t0,fin);
 }
@@ -991,6 +1016,15 @@ async function testSearch(){
   }catch(e){ out.className='pv-diag err'; out.textContent='✕ '+(e.message||e); }
 }
 
+/* ===== permissions ===== */
+const PERMS = {storage:true, mic:false, notify:false};
+(function initPerms(){ try{ const r=lsGet('lumi.perms'); if(r) Object.assign(PERMS, JSON.parse(r)); }catch(e){} })();
+function savePerms(){ lsSet('lumi.perms', JSON.stringify(PERMS)); }
+const PERM_NAMES = {storage:'本地存储', mic:'麦克风', notify:'通知'};
+function renderPerms(){ document.querySelectorAll('#perms [data-sw]').forEach(s=>s.classList.toggle('on', !!PERMS[s.dataset.sw])); }
+function openPerms(){ renderPerms(); $('#perms').classList.add('on'); }
+function closePerms(){ $('#perms').classList.remove('on'); }
+
 /* events */
 $('#sendBtn').addEventListener('click', ()=>send());
 $('#input').addEventListener('input', ()=>{ autoGrow(); syncSend(); });
@@ -1002,9 +1036,9 @@ $('#hist').addEventListener('click', e=>{
   const it=e.target.closest('[data-cid]'); if(it) openConv(it.dataset.cid);
 });
 $('#plusBtn').addEventListener('click', ()=>toast('添加附件'));
-$('#voiceBtn').addEventListener('click', ()=>toast('按住说话'));
+$('#voiceBtn').addEventListener('click', ()=>{ toast(PERMS.mic ? '按住说话' : '麦克风权限未开启，可在 权限管理 中打开'); });
 function openSettings(){ $('#settings').classList.add('on'); closeDrawer(); }
-function closeSettings(){ $('#settings').classList.remove('on'); closeProviders(); closeProviderEdit(); closeModels(); closeSearch(); }
+function closeSettings(){ $('#settings').classList.remove('on'); closeProviders(); closeProviderEdit(); closeModels(); closeSearch(); closePerms(); }
 $('#drawerSettings').addEventListener('click', openSettings);
 $('#setBack').addEventListener('click', closeSettings);
 $('#pvBack').addEventListener('click', closeProviders);
@@ -1031,6 +1065,12 @@ $('#srEnableRow').addEventListener('click', ()=>{
   if(!SEARCH.enabled && !searchReady()){ toast('请先选择提供商并填写 API Key'); return; }
   SEARCH.enabled=!SEARCH.enabled; saveSearch(); renderSearch(); toast(SEARCH.enabled?'已开启联网搜索':'已关闭联网搜索');
 });
+$('#pmBack').addEventListener('click', closePerms);
+$('#perms').addEventListener('click', e=>{
+  const r=e.target.closest('[data-perm]'); if(!r) return;
+  const k=r.dataset.perm; PERMS[k]=!PERMS[k]; savePerms(); renderPerms();
+  toast((PERMS[k]?'已开启 · ':'已关闭 · ')+(PERM_NAMES[k]||k));
+});
 renderProviders();
 (function initSearchVal(){ const a=$('#setSearchVal'); if(a) a.textContent = SEARCH.enabled?(searchReady()?'已开启':'未配置'):'关闭'; })();
 loadConvs(); showConv(currentConv()); renderHist();
@@ -1039,7 +1079,7 @@ function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classLi
 $('#scrim').addEventListener('click', closeDrawer);
 document.addEventListener('click', e=>{
   const o = e.target.closest('[data-open]');
-  if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); else if(o.dataset.open==='search') openSearch(); return; }
+  if(o){ if(o.dataset.open==='providers') openProviders(); else if(o.dataset.open==='models') openModels(); else if(o.dataset.open==='search') openSearch(); else if(o.dataset.open==='perms') openPerms(); return; }
   const s = e.target.closest('[data-t]');
   if(s){ toast(s.dataset.t); }
 });
