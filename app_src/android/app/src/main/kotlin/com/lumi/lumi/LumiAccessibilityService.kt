@@ -116,12 +116,19 @@ class LumiAccessibilityService : AccessibilityService() {
     private fun collect(n: AccessibilityNodeInfo?, out: ArrayList<AccessibilityNodeInfo>, depth: Int) {
         if (n == null || depth > MAX_DEPTH || out.size >= MAX_NODES) return
         if (n.isVisibleToUser && interesting(n)) out.add(n)
-        val kids = try {
-            n.children
+        val count = try {
+            n.childCount
         } catch (e: Exception) {
-            null
-        } ?: return
-        for (c in kids) collect(c, out, depth + 1)
+            return
+        }
+        for (i in 0 until count) {
+            val c = try {
+                n.getChild(i)
+            } catch (e: Exception) {
+                continue
+            }
+            collect(c, out, depth + 1)
+        }
     }
 
     private fun interesting(n: AccessibilityNodeInfo): Boolean =

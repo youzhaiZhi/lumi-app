@@ -135,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _emit(String fn, String id, String? arg) {
+  void _emit(String fn, String id, Object? arg) {
     final a = arg == null ? 'null' : jsonEncode(arg);
     _controller
         .runJavaScript('window.__lumi && window.__lumi.$fn(${jsonEncode(id)}, $a);')
