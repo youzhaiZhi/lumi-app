@@ -38,6 +38,10 @@ jobs:
           cp app_src/lib/main.dart lib/main.dart
           mkdir -p assets
           cp app_src/assets/index.html assets/index.html
+          cp -r app_src/android/. android/
+
+      - name: Register accessibility service
+        run: python3 app_src/tool/inject_a11y.py
 
       - name: Ensure INTERNET permission
         run: |
