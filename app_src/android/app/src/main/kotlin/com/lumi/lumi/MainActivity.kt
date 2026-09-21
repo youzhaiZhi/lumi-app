@@ -61,13 +61,9 @@ class MainActivity : FlutterActivity() {
         }
         if (secure != null && secure.contains(expected, ignoreCase = true)) return true
         val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager ?: return false
-        val self = LumiAccessibilityService::class.java.name
         return manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
             .orEmpty()
-            .any { info ->
-                val serviceInfo = info.serviceInfo
-                serviceInfo?.packageName == packageName && serviceInfo.name == self
-            }
+            .any { it.id?.equals(expected, ignoreCase = true) == true }
     }
 
     private fun openA11ySettings() {
