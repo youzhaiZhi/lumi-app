@@ -3,12 +3,19 @@ package com.lumi.lumi
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Path
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Base64
+import android.view.Display
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import java.io.ByteArrayOutputStream
+import java.util.concurrent.Executor
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -26,6 +33,8 @@ class LumiAccessibilityService : AccessibilityService() {
 
         private const val MAX_NODES = 80
         private const val MAX_DEPTH = 24
+        private const val MAX_SHOT_W = 1000
+        private const val SHOT_JPEG_QUALITY = 80
     }
 
     private val cache = HashMap<Int, AccessibilityNodeInfo>()
@@ -111,6 +120,120 @@ class LumiAccessibilityService : AccessibilityService() {
         if (!acted && op != "TAP") out.put("error", "$op 在当前目标上不被支持")
         out.put("acted", acted)
         return out.toString()
+    }
+
+    /**
+     * Captures the default display via the system screenshot API (Android 11+)
+     * and returns {ok, base64, width, height, scale}. Coordinates reported by a
+     * vision model in the scaled image must be multiplied by `scale` to map back
+     * onto real screen pixels before gesture injection.
+     */
+    fun screenshot(onDone: (String) -> Unit) {
+        val out = JSONObject()
+        if (Build.VERSION.SDK_INT < 30) {
+            out.put("ok", false)
+            out.put("error", "截图需要 Android 11 以上系统")
+            onDone(out.toString())
+            return
+        }
+        takeShot(retried = false, onDone = onDone)
+    }
+
+    private fun takeShot(retried: Boolean, onDone: (String) -> Unit) {
+        val main = Handler(Looper.getMainLooper())
+        val executor = Executor { r -> main.post(r) }
+        try {
+            takeScreenshot(
+                Display.DEFAULT_DISPLAY,
+                executor,
+                object : AccessibilityService.TakeScreenshotCallback() {
+                    override fun onSuccess(result: ScreenshotResult) {
+                        try {
+                            onDone(encodeShot(result))
+                        } catch (e: Exception) {
+                            val out = JSONObject()
+                            out.put("ok", false)
+                            out.put("error", "截图解码失败：${e.message ?: e}")
+                            onDone(out.toString())
+                        }
+                    }
+
+                    override fun onFailure(errorCode: Int) {
+                        // The system rate-limits consecutive screenshots; one
+                        // delayed retry covers that transient failure.
+                        if (!retried) {
+                            main.postDelayed({ takeShot(retried = true, onDone = onDone) }, 1200)
+                            return
+                        }
+                        val out = JSONObject()
+                        out.put("ok", false)
+                        out.put("error", "截图失败（错误码 $errorCode）")
+                        onDone(out.toString())
+                    }
+                }
+            )
+        } catch (e: Exception) {
+            val out = JSONObject()
+            out.put("ok", false)
+            out.put("error", "截图调用失败：${e.message ?: e}")
+            onDone(out.toString())
+        }
+    }
+
+    private fun encodeShot(result: ScreenshotResult): String {
+        val buffer = result.hardwareBuffer
+        try {
+            val hw = Bitmap.wrapHardwareBuffer(buffer, result.colorSpace)
+                ?: throw IllegalStateException("无法解码截图缓冲")
+            val fullW = hw.width
+            var scaled = hw.copy(Bitmap.Config.ARGB_8888, false)
+                ?: throw IllegalStateException("无法转换硬件位图")
+            if (fullW > MAX_SHOT_W) {
+                scaled = Bitmap.createScaledBitmap(
+                    scaled,
+                    MAX_SHOT_W,
+                    scaled.height * MAX_SHOT_W / fullW,
+                    true
+                )
+            }
+            val bytes = ByteArrayOutputStream().also {
+                scaled.compress(Bitmap.CompressFormat.JPEG, SHOT_JPEG_QUALITY, it)
+            }.toByteArray()
+            val out = JSONObject()
+            out.put("ok", true)
+            out.put("base64", Base64.encodeToString(bytes, Base64.NO_WRAP))
+            out.put("width", scaled.width)
+            out.put("height", scaled.height)
+            out.put("scale", fullW.toDouble() / scaled.width)
+            return out.toString()
+        } finally {
+            try {
+                buffer.close()
+            } catch (ignored: Exception) {
+            }
+        }
+    }
+
+    /** Coordinate-based gestures for screens with no readable control tree. */
+    fun gestureAct(x: Float, y: Float, x2: Float, y2: Float, swipe: Boolean): String {
+        val out = JSONObject()
+        val acted = if (swipe) gestureSwipe(x, y, x2, y2) else gestureTap(x, y)
+        if (!acted) out.put("error", "手势注入失败")
+        out.put("acted", acted)
+        return out.toString()
+    }
+
+    private fun gestureSwipe(x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
+        if (Build.VERSION.SDK_INT < 24) return false
+        return try {
+            val path = Path()
+            path.moveTo(x1, y1)
+            path.lineTo(x2, y2)
+            val stroke = GestureDescription.StrokeDescription(path, 0, 320)
+            dispatchGesture(GestureDescription.Builder().addStroke(stroke).build(), null, null)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun collect(n: AccessibilityNodeInfo?, out: ArrayList<AccessibilityNodeInfo>, depth: Int) {

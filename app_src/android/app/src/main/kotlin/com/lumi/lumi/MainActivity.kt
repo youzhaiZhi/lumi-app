@@ -31,13 +31,34 @@ class MainActivity : FlutterActivity() {
                         if (service == null) {
                             result.success("{\"acted\":false,\"error\":\"无障碍服务未开启\"}")
                         } else {
-                            result.success(
-                                service.act(
-                                    call.argument<String>("op") ?: "",
-                                    intArg(call, "index"),
-                                    call.argument<String>("text")
+                            val op = call.argument<String>("op") ?: ""
+                            if (op == "TAP_XY" || op == "SWIPE_XY") {
+                                result.success(
+                                    service.gestureAct(
+                                        floatArg(call, "x"),
+                                        floatArg(call, "y"),
+                                        floatArg(call, "x2"),
+                                        floatArg(call, "y2"),
+                                        op == "SWIPE_XY"
+                                    )
                                 )
-                            )
+                            } else {
+                                result.success(
+                                    service.act(
+                                        op,
+                                        intArg(call, "index"),
+                                        call.argument<String>("text")
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    "screenshot" -> {
+                        val service = LumiAccessibilityService.instance
+                        if (service == null) {
+                            result.success("{\"ok\":false,\"error\":\"无障碍服务未开启\"}")
+                        } else {
+                            service.screenshot { json -> result.success(json) }
                         }
                     }
                     else -> result.notImplemented()
@@ -47,6 +68,9 @@ class MainActivity : FlutterActivity() {
 
     private fun intArg(call: MethodCall, key: String): Int =
         (call.argument<Any>(key) as? Number)?.toInt() ?: 0
+
+    private fun floatArg(call: MethodCall, key: String): Float =
+        (call.argument<Any>(key) as? Number)?.toFloat() ?: 0f
 
     /**
      * EnabledServiceList is the reliable read; the AccessibilityManager query is a
