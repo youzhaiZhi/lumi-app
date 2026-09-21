@@ -146,8 +146,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: WebViewWidget(controller: _controller),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        bool handled = false;
+        try {
+          final r = await _controller.runJavaScriptReturningFuture(
+            'window.__lumi && window.__lumi.onBack ? !!window.__lumi.onBack() : false',
+          );
+          handled = r == true;
+        } catch (_) {}
+        if (!handled) await SystemNavigator.pop();
+      },
+      child: Scaffold(
+        body: WebViewWidget(controller: _controller),
+      ),
     );
   }
 }
