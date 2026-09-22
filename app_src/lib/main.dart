@@ -43,8 +43,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  static const MethodChannel _native = MethodChannel('lumi/native');
-
   late final WebViewController _controller;
 
   @override
@@ -54,58 +52,19 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.white)
-      ..addJavaScriptChannel('FlutterLumi', onMessageReceived: _onBridgeMessage)
+      ..addJavaScriptChannel('FlutterLumi', onMessageReceived: _onHttpRequest)
       ..loadFlutterAsset('assets/index.html');
   }
 
-  Future<void> _onBridgeMessage(JavaScriptMessage message) async {
+  // Performs an HTTP request on behalf of the WebView so streaming chat
+  // completions and /models calls are not blocked by browser CORS.
+  Future<void> _onHttpRequest(JavaScriptMessage message) async {
     Map<String, dynamic> cfg;
     try {
       cfg = jsonDecode(message.message) as Map<String, dynamic>;
     } catch (_) {
       return;
     }
-    if (cfg['type'] == 'exit') {
-      await SystemNavigator.pop();
-      return;
-    }
-    if (cfg['type'] == 'native') {
-      await _onNative(cfg);
-      return;
-    }
-    await _onHttpRequest(cfg);
-  }
-
-  // Forwards a device capability call (accessibility status, screen observe,
-  // screen act) to the Android side and returns the decoded result to JS.
-  Future<void> _onNative(Map<String, dynamic> cfg) async {
-    final id = (cfg['id'] ?? '').toString();
-    final method = (cfg['method'] ?? '').toString();
-    final raw = cfg['args'];
-    try {
-      final result = await _native.invokeMethod<dynamic>(
-        method,
-        raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{},
-      );
-      dynamic data = result;
-      if (result is String && result.isNotEmpty) {
-        try {
-          data = jsonDecode(result);
-        } catch (_) {
-          data = result;
-        }
-      }
-      if (!mounted) return;
-      _emit('onNative', id, {'ok': true, 'data': data});
-    } catch (e) {
-      if (!mounted) return;
-      _emit('onNative', id, {'ok': false, 'error': e.toString()});
-    }
-  }
-
-  // Performs an HTTP request on behalf of the WebView so streaming chat
-  // completions and /models calls are not blocked by browser CORS.
-  Future<void> _onHttpRequest(Map<String, dynamic> cfg) async {
     final id = (cfg['id'] ?? '').toString();
     final url = (cfg['url'] ?? '').toString();
     final method = (cfg['method'] ?? 'POST').toString();
@@ -139,7 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _emit(String fn, String id, Object? arg) {
+  void _emit(String fn, String id, String? arg) {
     final a = arg == null ? 'null' : jsonEncode(arg);
     _controller
         .runJavaScript('window.__lumi && window.__lumi.$fn(${jsonEncode(id)}, $a);')
@@ -150,17 +109,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) async {
-        if (didPop) return;
-        _controller.runJavaScript(
-          'window.__lumi && window.__lumi.onBack && window.__lumi.onBack();',
-        );
-      },
-      child: Scaffold(
-        body: WebViewWidget(controller: _controller),
-      ),
+    return Scaffold(
+      body: WebViewWidget(controller: _controller),
     );
   }
 }

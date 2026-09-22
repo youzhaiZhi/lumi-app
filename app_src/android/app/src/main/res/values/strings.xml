@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="lumi_a11y_description">允许 Lumi 读取当前界面的可点击控件，并按你的指令执行点击、输入和滚动。</string>
-</resources>
