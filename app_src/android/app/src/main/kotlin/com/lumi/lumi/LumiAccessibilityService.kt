@@ -140,13 +140,20 @@ class LumiAccessibilityService : AccessibilityService() {
     }
 
     private fun takeShot(retried: Boolean, onDone: (String) -> Unit) {
+        if (Build.VERSION.SDK_INT < 30) {
+            val out = JSONObject()
+            out.put("ok", false)
+            out.put("error", "截图需要 Android 11 以上系统")
+            onDone(out.toString())
+            return
+        }
         val main = Handler(Looper.getMainLooper())
         val executor = Executor { r -> main.post(r) }
         try {
             takeScreenshot(
                 Display.DEFAULT_DISPLAY,
                 executor,
-                object : AccessibilityService.TakeScreenshotCallback() {
+                object : AccessibilityService.TakeScreenshotCallback {
                     override fun onSuccess(result: ScreenshotResult) {
                         try {
                             onDone(encodeShot(result))
@@ -181,6 +188,7 @@ class LumiAccessibilityService : AccessibilityService() {
     }
 
     private fun encodeShot(result: ScreenshotResult): String {
+        if (Build.VERSION.SDK_INT < 30) throw IllegalStateException("需要 Android 11")
         val buffer = result.hardwareBuffer
         try {
             val hw = Bitmap.wrapHardwareBuffer(buffer, result.colorSpace)
