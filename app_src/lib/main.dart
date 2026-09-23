@@ -65,6 +65,10 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (_) {
       return;
     }
+    if (cfg['type'] == 'exit') {
+      await SystemNavigator.pop();
+      return;
+    }
     final id = (cfg['id'] ?? '').toString();
     final url = (cfg['url'] ?? '').toString();
     final method = (cfg['method'] ?? 'POST').toString();
@@ -109,8 +113,17 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: WebViewWidget(controller: _controller),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        _controller.runJavaScript(
+          'window.__lumi && window.__lumi.onBack && window.__lumi.onBack();',
+        );
+      },
+      child: Scaffold(
+        body: WebViewWidget(controller: _controller),
+      ),
     );
   }
 }
